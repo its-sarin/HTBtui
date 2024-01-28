@@ -1,2 +1,5 @@
 rich_examples/
+textualize_examples/
+testing/
 __pycache__/htb.cpython-312.pyc
+test.py

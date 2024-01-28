@@ -1,0 +1,81 @@
+Screen {
+    layout: grid;
+    grid-size: 6;
+}
+
+Header {
+    height: 3;
+    color: #37ff0f;
+    background: #171717;
+    text-style: bold;
+}
+
+RichLog {
+    padding: 1 0 0 2;
+    scrollbar-background: transparent;
+    scrollbar-color: green;
+    scrollbar-size-vertical: 1;
+    scrollbar-size-horizontal: 0;
+    background: #000;
+}
+
+Input:focus {
+    border: tall #37ff0f;
+}
+
+#sidebar {
+    column-span: 2;
+    row-span: 5;
+    background: #111;
+}
+
+#main {
+    column-span: 4;
+    row-span: 5;
+    background: #000;
+}
+
+#footer_left {
+    column-span: 3;
+    row-span: 2;
+}
+
+#footer_right {
+    column-span: 3;
+    row-span: 2;
+    tint: yellow 40%;
+}
+
+#stats_container {
+    height: 45%;
+    color: #37ff0f;
+    border-bottom: #000;
+}
+
+#player {
+    height: 65%;    
+}
+
+#season {
+    height: 35%;
+}
+
+#machine_list {
+    height: 55%;
+    color: #0537ff;
+}
+
+#vpn_connection {
+    height: 100%;
+    border-right: #000;
+    content-align: center middle; 
+}
+
+#active_machine {
+    height: 100%;   
+    content-align: center middle; 
+}
+
+.box {
+    height: 100%;    
+}
