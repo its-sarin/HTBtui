@@ -30,16 +30,22 @@ class HTBClient:
         self.api_key = api_key
         self.base_url = "https://labs.hackthebox.com"
         self.endpoints = {
-            "info": "/api/v4/user/info",
-            "profile": "/api/v4/profile/",
-            "season": "/api/v4/season/list",
-            "season_rank": "/api/v4/season/user/rank/",
-            "connection_status": "/api/v4/connection/status",
-            "current_machines": "/api/v4/machine/paginated?per_page=100",
-            "active_machine": "/api/v4/machine/active",
-            "active_season_machine": "/api/v4/season/machine/active",
-            "active_machine_info": "/api/v4/machine/info/",
-            "search": "/api/v4/search/fetch?query=", # + keyword + "&tags=" + filter
+            "GET": {
+                "info": "/api/v4/user/info",
+                "profile": "/api/v4/profile/",
+                "season": "/api/v4/season/list",
+                "season_rank": "/api/v4/season/user/rank/",
+                "connection_status": "/api/v4/connection/status",
+                "current_machines": "/api/v4/machine/paginated?per_page=100",
+                "active_machine": "/api/v4/machine/active",
+                "active_season_machine": "/api/v4/season/machine/active",
+                "active_machine_info": "/api/v4/machine/info/",
+                "search": "/api/v4/search/fetch?query=", # + keyword + "&tags=" + filter
+            },
+            "POST": {
+                "spawn_machine": "/api/v4/vm/spawn", # POST DATA {"machine_id": id}
+                "terminate_machine": "/api/v4/vm/terminate", # POST DATA {"machine_id": id}
+            },
         }
         self.headers = {
             "Authorization": f"Bearer {api_key}",
@@ -122,7 +128,7 @@ class HTBClient:
     async def get_user_id(self):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["info"], headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["info"], headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
                     self.user_data["id"] = data['info']['id']
@@ -139,7 +145,7 @@ class HTBClient:
             if self.user_data["id"] is None:
                 await self.get_user_id()
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["profile"] + str(self.user_data["id"]), headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["profile"] + str(self.user_data["id"]), headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
                     self.user_data["name"] = data['profile']['name']
@@ -163,7 +169,7 @@ class HTBClient:
     async def get_current_season(self):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["season"], headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["season"], headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
 
@@ -188,7 +194,7 @@ class HTBClient:
             if self.current_season["id"] is None:
                 await self.get_current_season()
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["season_rank"] + str(self.current_season["id"]), headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["season_rank"] + str(self.current_season["id"]), headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
 
@@ -211,7 +217,7 @@ class HTBClient:
     async def get_connection_status(self):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["connection_status"], headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["connection_status"], headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
                     # assign data to self.connection_data
@@ -244,7 +250,7 @@ class HTBClient:
     async def get_machine_list(self):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["current_machines"], headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["current_machines"], headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
 
@@ -268,24 +274,25 @@ class HTBClient:
     async def get_active_machine(self):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(self.base_url + self.endpoints["active_machine"], headers=self.headers)
+                response = await client.get(self.base_url + self.endpoints["GET"]["active_machine"], headers=self.headers)
 
                 if response.status_code == 200:
                     data = response.json()
 
                     if data["info"] is None:
                         self.active_machine_data["status"] = "No active machine"
-                        self.active_machine_data["name"] = "None"
-                        self.active_machine_data["os"] = "None"
-                        self.active_machine_data["ip"] = "None"
-                        self.active_machine_data["difficulty"] = "None"
+                        self.active_machine_data["id"] = None
+                        self.active_machine_data["name"] = None
+                        self.active_machine_data["os"] = None
+                        self.active_machine_data["ip"] = None
+                        self.active_machine_data["difficulty"] = None
                         self.active_machine_data["user_owned"] = False
                         self.active_machine_data["root_owned"] = False
                         self.active_machine_data["playInfo"]["isSpawned"] = False
                         self.active_machine_data["playInfo"]["isSpawning"] = False
                         self.active_machine_data["playInfo"]["isActive"] = False
                         self.active_machine_data["playInfo"]["active_player_count"] = 0
-                        self.active_machine_data["playInfo"]["expires_at"] = "None"
+                        self.active_machine_data["playInfo"]["expires_at"] = None
 
                         return data
 
@@ -297,7 +304,7 @@ class HTBClient:
                     self.active_machine_data["name"] = data["info"]["name"]
 
                     # get additional machine data
-                    response = await client.get(self.base_url + self.endpoints["active_machine_info"] + str(self.active_machine_data["id"]), headers=self.headers)
+                    response = await client.get(self.base_url + self.endpoints["GET"]["active_machine_info"] + str(self.active_machine_data["id"]), headers=self.headers)
                     if response.status_code == 200:
                         data = response.json()
 
@@ -324,8 +331,8 @@ class HTBClient:
     async def get_search_results(self, filter: str, keyword: str):
         try:
             async with httpx.AsyncClient() as client:
-                print(self.base_url + self.endpoints["search"] + '"' + keyword + '"' + '&tags=[\"' + filter + '\"]')
-                response = await client.get(self.base_url + self.endpoints["search"] + '"' + keyword + '"' + '&tags=[\"' + filter + '\"]', headers=self.headers)
+                print(self.base_url + self.endpoints["GET"]["search"] + '"' + keyword + '"' + '&tags=[\"' + filter + '\"]')
+                response = await client.get(self.base_url + self.endpoints["GET"]["search"] + '"' + keyword + '"' + '&tags=[\"' + filter + '\"]', headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
                     self.search_results = data
@@ -335,7 +342,34 @@ class HTBClient:
                     return f"Error: {response.status_code} - {response.text}"
         except Exception as e:
             return f"Error: {e}"
+        
 
+    async def spawn_machine(self, machine_id: int):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["spawn_machine"], headers=self.headers, data={"machine_id": machine_id})
+                data = response.json()
+                
+                return data
+        except Exception as e:
+            return f"Error: {e}"
+        
+    
+    async def terminate_machine(self, machine_id: int):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["terminate_machine"], headers=self.headers, data={"machine_id": machine_id})
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+
+    ###########################################################################################################
+    # Rich Table formatting
+    ###########################################################################################################
+        
     def id_to_rank(self, id: str) -> str:
         for i, rank in enumerate(Ranks):
             if i == (id-1):
@@ -387,14 +421,9 @@ class HTBClient:
 
         return table
     
-    def make_connection(self, refresh=False):
-        if refresh:
-            self.get_connection_status()
+    def make_connection(self):
         if self.connection_data["status"] != "Active":
-            status = Table.grid(expand=True)
-            status.add_column(style="red bold", vertical="middle", justify="center", ratio=1)
-            status.add_row(f"{self.connection_data["status"]}")
-            return status
+            return f"[red bold]{self.connection_data["status"]}"
 
         table = Table(
             box=box.SIMPLE,
@@ -404,14 +433,12 @@ class HTBClient:
             expand=True
         )
 
-        table.add_column(style="bold", no_wrap=True)
         table.add_column()
 
-        table.add_row("Location", self.connection_data["location_type_friendly"])
-        table.add_row("Server", self.connection_data["server"]["hostname"])
-        table.add_row("IP", f"[#37ff0f]{self.connection_data["connection"]["ip4"]}")
-        table.add_row("Pwnbox", f"{self.connection_data["connection"]["through_pwnbox"]}")
-        table.add_row("Usage", f"↑ {self.connection_data["connection"]["down"]} : ↓ {self.connection_data["connection"]["up"]}")
+        table.add_row(self.connection_data["location_type_friendly"] + " -- " + f"[#37ff0f]{self.connection_data["connection"]["ip4"]}")
+        table.add_row(self.connection_data["server"]["hostname"], )
+        table.add_row("Pwnbox Active" if self.connection_data["connection"]["through_pwnbox"] else "Pwnbox Inactive")
+        table.add_row(f"↑ {self.connection_data["connection"]["down"]} : ↓ {self.connection_data["connection"]["up"]}")
 
         return table
     
@@ -438,14 +465,9 @@ class HTBClient:
 
         return table
     
-    def make_active_machine(self, refresh=False):
-        if refresh:
-            self.get_active_machine()
+    def make_active_machine(self):
         if self.active_machine_data["status"] != "Active":
-            status = Table.grid(expand=True)
-            status.add_column(style="red bold", vertical="middle", justify="center", ratio=1)
-            status.add_row(f"{self.active_machine_data["status"]}")
-            return status
+            return f"[red bold]{self.active_machine_data["status"]}"
         table = Table(
             box=box.SIMPLE,
             show_header=False,
@@ -456,24 +478,21 @@ class HTBClient:
 
         table.add_column()
         table.add_column()
-        table.add_column()
-        table.add_column()
+        table.add_column(justify="left")
 
         table.add_row(
             self.active_machine_data["name"],
-            self.active_machine_data["ip"],
+            f"[#37ff0f]{self.active_machine_data["ip"]}",
+            f"# Players {self.active_machine_data["playInfo"]["active_player_count"]}"
             )
         table.add_row(
             self.active_machine_data["os"],
             self.active_machine_data["difficulty"],
-            "# Players",
-            str(self.active_machine_data["playInfo"]["active_player_count"])
+           
             )
         table.add_row(
-            "User", 
-            "☑" if self.active_machine_data["user_owned"] else "☐",
-            "Root",
-            "☑" if self.active_machine_data["root_owned"] else "☐"
+            "User ☑" if self.active_machine_data["user_owned"] else "User ☐",
+            "Root ☑" if self.active_machine_data["root_owned"] else "Root ☐"
             )
         if self.active_machine_data["playInfo"]["isSpawned"]:
             table.add_row(
@@ -495,7 +514,7 @@ if __name__ == "__main__":
         # htb.get_profile()
 
         console = Console()
-        result = await htb.get_search_results("machines", "analytic")
+        result = await htb.get_search_results("machines", "pov")
         console.print(result)
 
     asyncio.run(main())

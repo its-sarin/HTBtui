@@ -63,10 +63,6 @@ Input:blur {
     border: #0537ff;
 }
 
-#stats_container:focus {
-    border: red;
-}
-
 #player {
     height: 70%;    
 }
@@ -83,16 +79,15 @@ Input:blur {
 
 #vpn_connection {
     border: #0537ff;
-    content-align: center middle; 
     color: #0021B2;
 }
 
 #active_machine {
     border: #0537ff;
-    content-align: center middle; 
     color: #0021B2;
 }
 
 .box {
     height: 100%;    
+    content-align: center middle;
 }

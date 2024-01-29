@@ -19,6 +19,7 @@ htb = HTBClient(API_KEY)
 class spellb00k(App):
     CSS_PATH = "htb.tcss"
     DEBUG = False
+    REFRESH_INTERVAL = 10
 
     valid_base_commands = ["help",
                            "exit",
@@ -38,6 +39,8 @@ class spellb00k(App):
             "users"
         ],
         "clear" : [],
+        "start" : [],
+        "stop" : [],
     }
 
     def compose(self) -> ComposeResult:
@@ -68,11 +71,11 @@ class spellb00k(App):
             classes="box"
         )
         yield Container(
-            RichLog(highlight=True, markup=True, auto_scroll=True, id="console"),
+            RichLog(highlight=True, markup=True, auto_scroll=True, wrap=True, min_width=90, id="console"),
             Input(
                 placeholder="Enter a command",
                 suggester=SuggestFromList(self.valid_base_commands, case_sensitive=True),
-                validators=[Function(self.is_valid_command, "Invalid command")],
+                # validators=[Function(self.is_valid_command, "Invalid command")],
                 id="input"
             ),
             classes="box",
@@ -94,25 +97,25 @@ class spellb00k(App):
         log.write("[bold purple]Welcome to spellb00k!")
 
     def on_shutdown(self) -> None:
-        self.check_vpn.cancel()
-        self.check_active_machine.cancel()
-        
-    def on_input_submitted(self, message: Input.Submitted) -> None:
-        if message.validation_result.is_valid:
-            self.run_command(message.value)
-        message.control.clear()
+        self.refresh_connection.cancel()
+        self.refresh_active_machine.cancel()    
 
     async def on_mount(self) -> None:
-        # self.title = "spellb00k ::HTB module::"
-        # self.sub_title = "by sar1n"  
+        # Run the workers
         self.run_worker(self.update_connection())
         self.run_worker(self.update_profile())
         self.run_worker(self.update_season())
         self.run_worker(self.update_machine_list())
         self.run_worker(self.update_active_machine())
 
-        self.check_vpn = self.set_interval(10, self.update_connection)
-        self.check_active_machine = self.set_interval(10, self.update_active_machine)
+        # Refresh widgets every {self.REFRESH_INTERVAL} seconds
+        self.refresh_connection = self.set_interval(self.REFRESH_INTERVAL, self.update_connection)
+        self.refresh_active_machine = self.set_interval(self.REFRESH_INTERVAL, self.update_active_machine)
+
+    def on_input_submitted(self, message: Input.Submitted) -> None:
+        # if message.validation_result.is_valid:
+        self.run_command(message.value)
+        message.control.clear()
         
     async def update_connection(self) -> None:
         vpn_widget = self.query_one("#vpn_connection", Static)
@@ -156,19 +159,44 @@ class spellb00k(App):
 
     async def fetch_search_results(self, search_type: SearchFilter, search_term: str) -> None:
         log = self.query_one(RichLog)
+        log.write(f"[*] Finding {search_type} with name: {search_term} \n") 
         data = await htb.get_search_results(search_type, search_term)
 
         try:
             table = Table(expand=True, box=box.ASCII)
+            table.add_column("#")
             table.add_column("id", no_wrap=True)
-            table.add_column("Name")
+            table.add_column("name")
 
-            for result in data[search_type]:
-                table.add_row(str(result['id']), result['value'])
+            # sometimes the data is a dict, sometimes it's a list ::shrug::
+
+            for i, result in enumerate(data[search_type].values()):
+                table.add_row(str(i), result["id"], result["value"])
 
             log.write(table)
+            log.write("\n")
+            log.write(f"[+] Found {len(data[search_type])} {search_type} with name: {search_term}")
+            log.write(f"[+] Use the id to start the machine with: start <id>")
         except Exception as e:
             log.write(f"[red]{e}")
+
+    async def start_machine(self, machine_id: int) -> None:
+        log = self.query_one(RichLog)
+        log.write(f"[*] Starting machine with id: {machine_id}")
+        data = await htb.spawn_machine(machine_id)
+        log.write("[!] " + data["message"])
+
+    async def stop_machine(self) -> None:
+        log = self.query_one(RichLog)
+
+        if htb.active_machine_data["id"] is None:
+            log.write("[!] No active machine")
+            return
+        
+        machine_id = htb.active_machine_data["id"]
+        log.write(f"[*] Stopping machine with id: {machine_id}")
+        data = await htb.terminate_machine(machine_id)
+        log.write("[!] " + data["message"])
         
     def run_command(self, command: str) -> None:
         log = self.query_one(RichLog)
@@ -185,39 +213,39 @@ class spellb00k(App):
             case "reset":
                 log.write("reset")
             case "start":
-                log.write("start")
+                if len(cmds) != 2:
+                    log.write("Usage: start <machine_id>")
+                else:
+                    self.run_worker(self.start_machine(int(cmds[1])))
             case "stop":
-                log.write("stop")
+                if len(cmds) > 1:
+                    log.write("Usage: stop")
+                else:
+                    self.run_worker(self.stop_machine())
             case "refresh":
                 log.write("refresh")
             case "find":
                 if len(cmds) < 3 or len(cmds) > 3:
                     log.write("Usage: find <machines|users> <name>")
-                else:
-                    log.write(f"[!] Finding {cmds[1]} with name: " + cmds[2])  
+                else:                     
                     self.run_worker(self.fetch_search_results(cmds[1], cmds[2]))                  
             case _:
                 log.write("[red]Invalid command")
     
 
-    def is_valid_command(self, value: str) -> bool:
-        try:
-            cmds = value.split()
-            if len(cmds) > 1:
-                if cmds[0] in self.command_tree:
-                    return cmds[1] in self.command_tree[cmds[0]]
-            else:
-                return value in self.valid_base_commands
-        except ValueError:
-            return False
+    # def is_valid_command(self, value: str) -> bool:
+    #     try:
+    #         return value.split()[0] in self.valid_base_commands
+    #     except ValueError:
+    #         return False
 
     
-    @on(Input.Submitted)
-    def show_invalid_reasons(self, event: Input.Submitted) -> None:
-        # Updating the UI to show the reasons why validation failed
-        if not event.validation_result.is_valid:  
-            for reason in event.validation_result.failure_descriptions:
-                self.query_one(RichLog).write(f"[red]{reason}")
+    # @on(Input.Submitted)
+    # def show_invalid_reasons(self, event: Input.Submitted) -> None:
+    #     # Updating the UI to show the reasons why validation failed
+    #     if not event.validation_result.is_valid:  
+    #         for reason in event.validation_result.failure_descriptions:
+    #             self.query_one(RichLog).write(f"[red]{reason}")
 
 
 if __name__ == "__main__":
