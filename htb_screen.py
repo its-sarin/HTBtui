@@ -11,8 +11,13 @@ from rich.table import Table, box
 
 from htb import HTBClient, SearchFilter
 
-# get api key from environment variable
-API_KEY = os.environ['HTB_API_KEY']
+# get api key from environment variable and throw error if not found
+ENV_NAME = "HTB_API_KEY"
+API_KEY = os.environ[ENV_NAME] if ENV_NAME in os.environ else None
+if API_KEY is None:
+    raise Exception(f"Environment variable {ENV_NAME} not found")
+elif len(API_KEY.split('.')) != 3:
+    raise Exception(f"Invalid API key found in {ENV_NAME}. Please check your API key or generate a new one.")
 
 htb = HTBClient(API_KEY)    
 
@@ -169,9 +174,12 @@ class spellb00k(App):
             table.add_column("name")
 
             # sometimes the data is a dict, sometimes it's a list ::shrug::
-
-            for i, result in enumerate(data[search_type].values()):
-                table.add_row(str(i), result["id"], result["value"])
+            if isinstance(data[search_type], dict):
+                for i, result in enumerate(data[search_type].values()):
+                    table.add_row(str(i), result["id"], result["value"])
+            else:
+                for i, result in enumerate(data[search_type]):
+                    table.add_row(str(i), result["id"], result["value"])
 
             log.write(table)
             log.write("\n")
@@ -179,6 +187,7 @@ class spellb00k(App):
             log.write(f"[+] Use the id to start the machine with: start <id>")
         except Exception as e:
             log.write(f"[red]{e}")
+
 
     async def start_machine(self, machine_id: int) -> None:
         log = self.query_one(RichLog)

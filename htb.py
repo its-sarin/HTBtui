@@ -7,9 +7,6 @@ from rich.console import Console
 from rich import box
 import httpx
 
-# Set your Hack The Box API key
-# Retrieve API key from environment variable
-api_key = os.environ['HTB_API_KEY']
 
 class SearchFilter(Enum):
     MACHINES = "machines"
@@ -509,8 +506,15 @@ class HTBClient:
 
 if __name__ == "__main__":
     import asyncio
+
+    # get api key from environment variable and throw error if not found
+    ENV_NAME = "HTB_API_KEY"
+    API_KEY = os.environ[ENV_NAME] if ENV_NAME in os.environ else None
+    if API_KEY is None:
+        raise Exception(f"Environment variable {ENV_NAME} not found")
+    
     async def main():
-        htb = HTBClient(api_key)
+        htb = HTBClient(API_KEY)
         # htb.get_profile()
 
         console = Console()
