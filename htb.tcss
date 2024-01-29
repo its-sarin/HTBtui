@@ -1,10 +1,9 @@
 Screen {
     layout: grid;
-    grid-size: 6;
+    grid-size: 8;
 }
 
 Header {
-    height: 3;
     color: #37ff0f;
     background: #171717;
     text-style: bold;
@@ -19,61 +18,79 @@ RichLog {
     background: #000;
 }
 
+RichLog { 
+    Table {
+        color: #37ff0f;
+    }
+}
+
 Input:focus {
     border: tall #37ff0f;
 }
 
+Input:blur {
+    border: tall #000;
+}
+
 #sidebar {
-    column-span: 2;
-    row-span: 5;
+    column-span: 3;
+    row-span: 6;
     background: #111;
 }
 
 #main {
-    column-span: 4;
-    row-span: 5;
+    column-span: 5;
+    row-span: 6;
     background: #000;
 }
 
 #footer_left {
-    column-span: 3;
+    column-span: 4;
     row-span: 2;
+    background: #111;
 }
 
 #footer_right {
-    column-span: 3;
+    column-span: 4;
     row-span: 2;
-    tint: yellow 40%;
+    background: #111;
 }
 
 #stats_container {
-    height: 45%;
-    color: #37ff0f;
-    border-bottom: #000;
+    height: 40%;
+    # color: #37ff0f;
+    color: #0021B2;
+    border: #0537ff;
+}
+
+#stats_container:focus {
+    border: red;
 }
 
 #player {
-    height: 65%;    
+    height: 70%;    
 }
 
 #season {
-    height: 35%;
+    height: 30%;
 }
 
 #machine_list {
     height: 55%;
-    color: #0537ff;
+    color: #0021B2;
+    border: #0537ff;
 }
 
 #vpn_connection {
-    height: 100%;
-    border-right: #000;
+    border: #0537ff;
     content-align: center middle; 
+    color: #0021B2;
 }
 
 #active_machine {
-    height: 100%;   
+    border: #0537ff;
     content-align: center middle; 
+    color: #0021B2;
 }
 
 .box {
