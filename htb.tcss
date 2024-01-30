@@ -10,7 +10,7 @@ Header {
 }
 
 RichLog {
-    padding: 1 0 0 2;
+    padding: 1 0 1 2;
     scrollbar-background: transparent;
     scrollbar-color: green;
     scrollbar-size-vertical: 1;
@@ -85,6 +85,13 @@ Input:blur {
 #active_machine {
     border: #0537ff;
     color: #0021B2;
+}
+
+#ping {
+    dock: bottom;
+    margin: 1 2;
+    layer: 1;
+    width: 6;
 }
 
 .box {

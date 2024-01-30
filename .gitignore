@@ -3,3 +3,5 @@ textualize_examples/
 testing/
 __pycache__/htb.cpython-312.pyc
 test.py
+test_ping.py
+utilities/__pycache__/ping.cpython-312.pyc

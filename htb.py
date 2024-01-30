@@ -1,11 +1,10 @@
-import requests
 import os
+import httpx
 from enum import Enum
 from rich.table import Table
 from rich.theme import Theme
 from rich.console import Console
 from rich import box
-import httpx
 
 
 class SearchFilter(Enum):
@@ -42,6 +41,7 @@ class HTBClient:
             "POST": {
                 "spawn_machine": "/api/v4/vm/spawn", # POST DATA {"machine_id": id}
                 "terminate_machine": "/api/v4/vm/terminate", # POST DATA {"machine_id": id}
+                "reset_machine": "/api/v4/vm/reset", # POST DATA {"machine_id": id}
             },
         }
         self.headers = {
@@ -104,6 +104,7 @@ class HTBClient:
             "Windows": ":zzz:"
         }
         self.active_machine_data = {
+            "id": None,
             "status": None, 
             "name": None,
             "os": None,
@@ -306,6 +307,7 @@ class HTBClient:
                         data = response.json()
 
                         # assign data to self.active_machine_data
+                        self.active_machine_data["id"] = data["info"]["id"]
                         self.active_machine_data["os"] = data["info"]["os"]
                         self.active_machine_data["difficulty"] = data["info"]["difficultyText"]
                         self.active_machine_data["user_owned"] = data["info"]["authUserInUserOwns"]
@@ -356,6 +358,17 @@ class HTBClient:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(self.base_url + self.endpoints["POST"]["terminate_machine"], headers=self.headers, data={"machine_id": machine_id})
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+
+    async def reset_machine(self, machine_id: int):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["reset_machine"], headers=self.headers, data={"machine_id": machine_id})
                 data = response.json()
                 
                 return data                
@@ -488,18 +501,18 @@ class HTBClient:
            
             )
         table.add_row(
-            "User ☑" if self.active_machine_data["user_owned"] else "User ☐",
-            "Root ☑" if self.active_machine_data["root_owned"] else "Root ☐"
+            "User [green1]☑" if self.active_machine_data["user_owned"] else "User [white]☐",
+            "Root [green1]☑" if self.active_machine_data["root_owned"] else "Root [white]☐"
             )
         if self.active_machine_data["playInfo"]["isSpawned"]:
             table.add_row(
-                "Status", "Spawned"
+                "Status", "[green1]Spawned"
             )
         elif self.active_machine_data["playInfo"]["isSpawning"]:
             table.add_row(
-                "Status", "Spawning"
+                "Status", "[yellow3]Spawning"
             )
-        table.add_row("Expires", self.active_machine_data["playInfo"]["expires_at"])
+        # table.add_row("Expires", self.active_machine_data["playInfo"]["expires_at"])
 
         return table
 
