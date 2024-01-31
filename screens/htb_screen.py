@@ -56,11 +56,12 @@ class HTBScreen(Screen):
     }
 
     CSS_PATH = "htb_screen.tcss"
-
+    
     def __init__(self) -> None:
         super().__init__()
         self.refresh_active_machine_ping = None
         self.has_active_machine = False
+        self.title = "[spellb00k]::Hack The Box Client::"
         self.htb = HTBClient(APIToken(self.TOKEN_NAME).get_token())
 
     def compose(self) -> ComposeResult:
@@ -83,9 +84,7 @@ class HTBScreen(Screen):
         active_machine_widget = Static(id="active_machine", classes="box")
         active_machine_widget.border_title = "Active Machine"
 
-        yield Header(
-            "spellb00k [Hack The Box Client]",
-        )
+        yield Header(show_clock=True)
 
         yield Container(
             player_stats_widget,

@@ -7,7 +7,6 @@ Header {
     color: #37ff0f;
     background: #171717;
     text-style: bold;
-    height: 1;
 }
 
 RichLog {
