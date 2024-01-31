@@ -22,8 +22,8 @@ class Ranks(Enum):
     
 
 class HTBClient:
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self, htb_token):
+        self.htb_token = htb_token
         self.base_url = "https://labs.hackthebox.com"
         self.endpoints = {
             "GET": {
@@ -45,7 +45,7 @@ class HTBClient:
             },
         }
         self.headers = {
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {self.htb_token}",
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }

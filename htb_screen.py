@@ -13,16 +13,13 @@ from rich.markdown import Markdown
 
 from htb import HTBClient, SearchFilter
 from utilities.ping import Ping
+from utilities.api_token import APIToken
+from widgets.current_machines import CurrentMachines
 
-# get api key from environment variable and throw error if not found
-ENV_NAME = "HTB_API_KEY"
-API_KEY = os.environ[ENV_NAME] if ENV_NAME in os.environ else None
-if API_KEY is None:
-    raise Exception(f"Environment variable {ENV_NAME} not found")
-elif len(API_KEY.split('.')) != 3:
-    raise Exception(f"Invalid API key found in {ENV_NAME}. Please check your API key or generate a new one.")
+KEY_NAME = "HTB_TOKEN"
+KEY = APIToken(KEY_NAME).get_token()
 
-htb = HTBClient(API_KEY)    
+htb = HTBClient(KEY)    
 
 # markdown test
 MARKDOWN = """
@@ -116,7 +113,8 @@ class spellb00k(App):
             )
         stats_widget.border_title = "Player Stats"
 
-        machine_list_widget = Static(id="machine_list")
+        # machine_list_widget = Static(id="machine_list", classes="box")
+        machine_list_widget = CurrentMachines()
         machine_list_widget.border_title = "Current Machines"
 
         vpn_widget = Static(id="vpn_connection", classes="box")
@@ -329,7 +327,7 @@ class spellb00k(App):
         """
         Updates the machine list widget with the latest machine list data from HTB.
         """
-        machine_list_widget = self.query_one("#machine_list", Static)        
+        machine_list_widget = self.query_one(CurrentMachines)        
         data = await htb.get_machine_list()
         if self.DEBUG_LEVEL == self.DebugLevel.HIGH:
             log = self.query_one(RichLog)

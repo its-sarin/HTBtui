@@ -71,7 +71,7 @@ Input:blur {
     height: 30%;
 }
 
-#machine_list {
+CurrentMachines {
     height: 55%;
     color: #0021B2;
     border: #0537ff;
