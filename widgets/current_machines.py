@@ -11,13 +11,22 @@ from utilities.api_token import APIToken
 class CurrentMachines(Static):
     """Static widget that shows the current machines."""
 
+    token_name = "HTB_TOKEN"
+    base_url = "https://labs.hackthebox.com"
+    endpoint = "/api/v4/machine/paginated?per_page=100"
+    headers = {
+            "Authorization": f"Bearer {APIToken(token_name).get_token()}",
+            "Accept": "application/json, text/plain, */*",
+            "User-Agent": "HTBClient/1.0.0"
+        }
+
     def __init__(self) -> None:
         super().__init__()        
         self.machine_list = []
 
     async def on_mount(self) -> None:
         """Mount the widget."""
-        self.update_machine_list()
+        await self.update_machine_list()
 
 
     async def update_machine_list(self) -> None:
@@ -34,7 +43,7 @@ class CurrentMachines(Static):
         self.machine_list = []
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(super.base_url + super.endpoints["GET"]["current_machines"], headers=super.headers)
+                response = await client.get(self.base_url + self.endpoint, headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
 

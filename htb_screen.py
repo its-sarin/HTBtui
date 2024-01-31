@@ -184,7 +184,7 @@ class spellb00k(App):
         self.run_worker(self.update_connection())
         self.run_worker(self.update_profile())
         self.run_worker(self.update_season())
-        self.run_worker(self.update_machine_list())
+        # self.run_worker(self.update_machine_list())
         self.run_worker(self.update_active_machine())
 
         # self.run_worker(self.ping_host("1.1.1.1", 1))        

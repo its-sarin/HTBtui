@@ -45,7 +45,7 @@ class HTBClient:
             },
         }
         self.headers = {
-            "Authorization": f"Bearer {self.htb_token}",
+            "Authorization": f"Bearer {htb_token}",
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }
