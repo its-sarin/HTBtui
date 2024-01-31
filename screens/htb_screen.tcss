@@ -7,6 +7,7 @@ Header {
     color: #37ff0f;
     background: #171717;
     text-style: bold;
+    height: 1;
 }
 
 RichLog {
@@ -56,7 +57,7 @@ Input:blur {
     background: #111;
 }
 
-#stats_container {
+PlayerStats {
     height: 40%;
     # color: #37ff0f;
     color: #0021B2;

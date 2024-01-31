@@ -3,7 +3,6 @@ import httpx
 from rich.table import Table
 from rich import box
 
-from textual.app import App, ComposeResult
 from textual.widgets import Static
 
 from utilities.api_token import APIToken
@@ -23,10 +22,11 @@ class CurrentMachines(Static):
     def __init__(self) -> None:
         super().__init__()        
         self.machine_list = []
+        self.loading = True
 
     async def on_mount(self) -> None:
         """Mount the widget."""
-        await self.update_machine_list()
+        self.run_worker(self.update_machine_list())
 
 
     async def update_machine_list(self) -> None:
@@ -35,11 +35,26 @@ class CurrentMachines(Static):
         """       
         try:
             table: Table = await self.get_machine_list()
+            self.loading = False
             self.update(table)
         except Exception as e:
-            print(f"Error: {e}")
+            self.update(f"Error: {e}")
 
     async def get_machine_list(self):
+        """
+        Retrieves the list of machines from the server.
+
+        Returns:
+            list: A list of dictionaries representing the machines, each containing the following keys:
+                - name (str): The name of the machine.
+                - os (str): The operating system of the machine.
+                - difficulty (str): The difficulty level of the machine.
+                - user_owned (bool): Indicates whether the authenticated user owns the machine.
+                - root_owned (bool): Indicates whether the authenticated user has root access to the machine.
+        
+        Raises:
+            str: An error message if an exception occurs during the retrieval process.
+        """
         self.machine_list = []
         try:
             async with httpx.AsyncClient() as client:
