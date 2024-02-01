@@ -1,8 +1,7 @@
-from enum import Enum
-
+from textual import on
 from textual.screen import Screen
 from textual.widgets import Header, RichLog, Input, Static
-from textual.containers import Container
+from textual.containers import Container, VerticalScroll
 from textual.app import ComposeResult
 from textual.suggester import SuggestFromList
 
@@ -14,20 +13,17 @@ from htb import SearchFilter
 
 from widgets.player_stats import PlayerStats
 from widgets.current_machines import CurrentMachines
+from widgets.vpn_connection import VPNConnection
+from widgets.player_activity import PlayerActivity
 from utilities.ping import Ping
 from utilities.api_token import APIToken
+from enums.debug_level import DebugLevel
+from messages.debug_message import DebugMessage
 
-class HTBScreen(Screen):
 
-    class DebugLevel(Enum):
-        NONE = 0
-        LOW = 1
-        MEDIUM = 2
-        HIGH = 3
+class HTBScreen(Screen):    
 
     TOKEN_NAME = "HTB_TOKEN"
-
-    DEBUG_LEVEL: DebugLevel = DebugLevel.HIGH
     REFRESH_INTERVAL: int = 10
     PING_INTERVAL: int = 5
 
@@ -61,6 +57,7 @@ class HTBScreen(Screen):
         super().__init__()
         self.refresh_active_machine_ping = None
         self.has_active_machine = False
+        self.debug_level = DebugLevel.MEDIUM
         self.title = "[spellb00k]::Hack The Box Client::"
         self.htb = HTBClient(APIToken(self.TOKEN_NAME).get_token())
 
@@ -75,22 +72,23 @@ class HTBScreen(Screen):
         player_stats_widget.border_title = "Player Stats"
 
         # machine_list_widget = Static(id="machine_list", classes="box")
-        machine_list_widget = CurrentMachines()
-        machine_list_widget.border_title = "Current Machines"
+        player_activity_widget = VerticalScroll(
+                PlayerActivity()
+            )
+        player_activity_widget.border_title = "Activity"
 
-        vpn_widget = Static(id="vpn_connection", classes="box")
+        vpn_widget = VPNConnection()
         vpn_widget.border_title = "VPN Connection"
+        vpn_widget.classes = "box"
 
         active_machine_widget = Static(id="active_machine", classes="box")
         active_machine_widget.border_title = "Active Machine"
 
         yield Header(show_clock=True)
-
         yield Container(
-            player_stats_widget,
-            machine_list_widget,
-            id="sidebar",
-            classes="box"
+            player_stats_widget, 
+            player_activity_widget,
+            id="sidebar"
         )
         yield Container(
             RichLog(highlight=True, markup=True, auto_scroll=True, wrap=True, min_width=90, id="console"),
@@ -110,7 +108,6 @@ class HTBScreen(Screen):
         )
         yield Container(
             active_machine_widget,
-            Static(id="ping"),
             classes="box",
             id="footer_right"
         )
@@ -118,7 +115,7 @@ class HTBScreen(Screen):
     def on_load(self) -> None:
         """
         Event handler for when the application is loaded.
-        """
+        """        
         self.refresh_connection = None
         self.refresh_active_machine = None
         self.refresh_active_machine_ping = None
@@ -131,10 +128,10 @@ class HTBScreen(Screen):
 
         This method starts the refresh interval for the player stats and the VPN connection status.
         """
-        self.run_worker(self.update_connection())
+        # self.run_worker(self.update_connection())
         self.run_worker(self.update_active_machine())
 
-        self.refresh_connection = self.set_interval(self.REFRESH_INTERVAL, self.update_connection)
+        # self.refresh_connection = self.set_interval(self.REFRESH_INTERVAL, self.update_connection)
         self.refresh_active_machine = self.set_interval(self.REFRESH_INTERVAL, self.update_active_machine)
 
     def on_shutdown(self) -> None:
@@ -156,6 +153,18 @@ class HTBScreen(Screen):
         # if message.validation_result.is_valid:
         self.run_command(message.value)
         message.control.clear()
+
+    @on(DebugMessage)
+    def log_debug_messages(self, message: DebugMessage) -> None:
+        """
+        Logs debug messages to the console.
+
+        Args:
+            message (DebugMessage): The debug message to log.
+        """
+        if message.debug_level.value <= self.debug_level.value:
+            log = self.query_one(RichLog)
+            log.write(message.data)
 
     def handle_active_machine(self) -> None:
         """
@@ -196,13 +205,13 @@ class HTBScreen(Screen):
             host (str): The IP address or hostname to ping.
             count (int): The number of times to ping the host.
         """
-        if self.DEBUG_LEVEL.value >= self.DebugLevel.LOW.value:
+        if self.debug_level.value >= self.DebugLevel.LOW.value:
             log = self.query_one(RichLog)
             log.write(f"[+] Pinging {host}")
         
         data = await Ping.ping(host, count)
 
-        if self.DEBUG_LEVEL.value >= self.DebugLevel.LOW.value:
+        if self.debug_level.value >= self.DebugLevel.LOW.value:
             log.write(f"{data}")
 
     async def ping_active_machine(self) -> None:
@@ -212,7 +221,7 @@ class HTBScreen(Screen):
         Raises:
             Exception: If there is an error while pinging the machine.
         """
-        if self.DEBUG_LEVEL.value >= self.DebugLevel.LOW.value:
+        if self.debug_level.value >= self.DebugLevel.LOW.value:
             log = self.query_one(RichLog)
             log.write(f"[+] Pinging {self.htb.active_machine_data['ip']}")
 
@@ -224,19 +233,19 @@ class HTBScreen(Screen):
         except Exception as e:
             data = "Error: " + str(e)
 
-        if self.DEBUG_LEVEL.value >= self.DebugLevel.LOW.value:
+        if self.debug_level.value >= self.DebugLevel.LOW.value:
             log.write(f"[+] {data.split('\n')[-1].split('=')[-1].split()[0].split('/')[1].split('.')[0]}ms")
 
-    async def update_connection(self) -> None:
-        """
-        Updates the VPN connection status and updates the VPN widget accordingly.
-        """
-        vpn_widget = self.query_one("#vpn_connection", Static)        
-        data = await self.htb.get_connection_status()
-        if self.DEBUG_LEVEL == self.DebugLevel.HIGH:
-            log = self.query_one(RichLog)
-            log.write(data)
-        vpn_widget.update(self.htb.make_connection())
+    # async def update_connection(self) -> None:
+    #     """
+    #     Updates the VPN connection status and updates the VPN widget accordingly.
+    #     """
+    #     vpn_widget = self.query_one("#vpn_connection", Static)        
+    #     data = await self.htb.get_connection_status()
+    #     if self.DEBUG_LEVEL == self.DebugLevel.HIGH:
+    #         log = self.query_one(RichLog)
+    #         log.write(data)
+    #     vpn_widget.update(self.htb.make_connection())
 
     async def update_active_machine(self) -> None:
         """
@@ -244,7 +253,7 @@ class HTBScreen(Screen):
         """
         active_machine_widget = self.query_one("#active_machine", Static)        
         data = await self.htb.get_active_machine()
-        if self.DEBUG_LEVEL == self.DebugLevel.HIGH:
+        if self.debug_level == DebugLevel.HIGH:
             log = self.query_one(RichLog)
             log.write(data)
         self.handle_active_machine()

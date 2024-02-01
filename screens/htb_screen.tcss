@@ -1,6 +1,7 @@
 Screen {
     layout: grid;
     grid-size: 8;
+    grid-rows: 0.75fr 1fr;
 }
 
 Header {
@@ -16,12 +17,6 @@ RichLog {
     scrollbar-size-vertical: 1;
     scrollbar-size-horizontal: 0;
     background: #000;
-}
-
-RichLog { 
-    Table {
-        color: #37ff0f;
-    }
 }
 
 Input:focus {
@@ -44,6 +39,49 @@ Input:blur {
     background: #000;
 }
 
+# #player_stats_container {
+#     column-span: 3;
+#     row-span: 3;
+#     height: 43%;
+#     background: #111;
+# }
+
+# #player_activity_container {
+#     column-span: 3;
+#     row-span: 3;
+#     max-height: 100%;
+#     background: #000;
+#     overflow: hidden auto;
+# }
+
+
+PlayerStats {
+    height: 43%;
+    # color: #37ff0f;
+    color: #0021B2;
+    border: #0537ff;
+}
+
+CurrentMachines {
+    height: 57%;
+    color: #0021B2;
+    border: #0537ff;
+}
+
+VerticalScroll {
+    border: #0537ff;
+    scrollbar-background: transparent;
+    scrollbar-color: green;
+    scrollbar-size-vertical: 1;
+    scrollbar-size-horizontal: 0;
+}
+
+PlayerActivity {
+    min-height: 100%;
+    height: auto;
+    color: #0021B2;
+}
+
 #footer_left {
     column-span: 4;
     row-span: 2;
@@ -56,28 +94,7 @@ Input:blur {
     background: #111;
 }
 
-PlayerStats {
-    height: 40%;
-    # color: #37ff0f;
-    color: #0021B2;
-    border: #0537ff;
-}
-
-#player {
-    height: 70%;    
-}
-
-#season {
-    height: 30%;
-}
-
-CurrentMachines {
-    height: 55%;
-    color: #0021B2;
-    border: #0537ff;
-}
-
-#vpn_connection {
+VPNConnection {
     border: #0537ff;
     color: #0021B2;
 }

@@ -6,8 +6,11 @@ from rich import box
 from textual.widgets import Static
 
 from utilities.api_token import APIToken
+from enums.htb_ranks import Ranks
+from enums.debug_level import DebugLevel
+from messages.debug_message import DebugMessage
 
-from htb import Ranks
+
 
 class PlayerStats(Static):
     """Static widget that shows the player stats."""
@@ -27,9 +30,7 @@ class PlayerStats(Static):
         }
 
     def __init__(self) -> None:
-        super().__init__()    
-        self.loading = True
-    
+        super().__init__()        
         self.user_data = {
             "id" : None,
             "name" : None,
@@ -107,6 +108,9 @@ class PlayerStats(Static):
                 response = await client.get(self.base_url + self.endpoint["profile"] + str(self.user_data["id"]), headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
+
+                    self.post_message(DebugMessage({"Profile Data": data}, DebugLevel.MEDIUM))
+
                     self.user_data["name"] = data['profile']['name']
                     self.user_data["rank"] = data['profile']['rank_id']
                     self.user_data["ranking"] = data['profile']['ranking']
@@ -162,6 +166,8 @@ class PlayerStats(Static):
                 response = await client.get(self.base_url + self.endpoint["season_rank"] + str(self.current_season["id"]), headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
+
+                    self.post_message(DebugMessage({"Season Data": data}, DebugLevel.MEDIUM))
 
                     # assign data to self.season_data
                     self.season_data["league"] = data["data"]["league"]

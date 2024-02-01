@@ -29,6 +29,7 @@ class HTBClient:
             "GET": {
                 "info": "/api/v4/user/info",
                 "profile": "/api/v4/profile/",
+                "user_activity": "/api/v4/profile/activity/", # + user_id
                 "season": "/api/v4/season/list",
                 "season_rank": "/api/v4/season/user/rank/",
                 "connection_status": "/api/v4/connection/status",

@@ -1,10 +1,7 @@
+*.pyc
 _examples/
 _testing/
 __pycache__/htb.cpython-312.pyc
 test.py
 test_ping.py
-utilities/__pycache__/ping.cpython-312.pyc
-widgets/__pycache__/current_machines.cpython-312.pyc
-utilities/__pycache__/api_token.cpython-312.pyc
-screens/__pycache__/htb_screen.cpython-312.pyc
-widgets/__pycache__/player_stats.cpython-312.pyc
+htb_data.py

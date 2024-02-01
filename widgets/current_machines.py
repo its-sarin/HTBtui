@@ -6,6 +6,8 @@ from rich import box
 from textual.widgets import Static
 
 from utilities.api_token import APIToken
+from enums.debug_level import DebugLevel
+from messages.debug_message import DebugMessage
 
 class CurrentMachines(Static):
     """Static widget that shows the current machines."""
@@ -61,6 +63,8 @@ class CurrentMachines(Static):
                 response = await client.get(self.base_url + self.endpoint, headers=self.headers)
                 if response.status_code == 200:
                     data = response.json()
+
+                    self.post_message(DebugMessage({"Current Machines": data}, DebugLevel.MEDIUM))
 
                     for machine in data["data"]:
                         self.machine_list.append(
