@@ -28,7 +28,7 @@ class ActiveMachine(Static):
     def __init__(self) -> None:
         super().__init__()                
         self.loading = True
-        self.refresh_interval = 5
+        self.refresh_interval = 10
         self.active_machine_data = {
             "id": None,
             "status": None, 

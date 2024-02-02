@@ -24,7 +24,7 @@ class VPNConnection(Static):
     def __init__(self) -> None:
         super().__init__()                
         self.loading = True
-        self.refresh_interval = 5
+        self.refresh_interval = 10
         self.connection_data = {
             "status": None,
             "location_type_friendly": None,
