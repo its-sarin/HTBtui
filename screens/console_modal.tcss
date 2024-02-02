@@ -1,0 +1,38 @@
+ConsoleModal {
+    layout: horizontal;
+    align: center middle;
+}
+
+#console_container {
+    width: 80%;
+    height: 80%;
+    background: #000;
+    border: #0537ff;
+}
+
+#console {
+    margin: 1;
+    padding: 1 0 1 2;
+    border: solid #111;
+    background: #000;
+    scrollbar-background: transparent;
+    scrollbar-background-active: #111;
+    scrollbar-background-hover: #111;
+    scrollbar-color: #0021B2;
+    scrollbar-color-active: chartreuse;
+    scrollbar-color-hover: green;
+    scrollbar-size-vertical: 1;
+}
+
+#input {
+    margin: 1;
+    background: #111;
+}
+
+Input:focus {
+    border: tall #37ff0f;
+}
+
+Input:blur {
+    border: tall #000;
+}

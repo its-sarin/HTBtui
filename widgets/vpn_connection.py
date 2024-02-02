@@ -1,7 +1,5 @@
 import httpx
 
-from dataclasses import dataclass
-
 from rich.table import Table
 from rich import box
 

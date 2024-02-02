@@ -2,10 +2,10 @@ import os
 import httpx
 from enum import Enum
 from rich.table import Table
-from rich.theme import Theme
 from rich.console import Console
 from rich import box
 
+from utilities.api_token import APIToken
 
 class SearchFilter(Enum):
     MACHINES = "machines"
@@ -22,34 +22,37 @@ class Ranks(Enum):
     
 
 class HTBClient:
-    def __init__(self, htb_token):
-        self.htb_token = htb_token
-        self.base_url = "https://labs.hackthebox.com"
-        self.endpoints = {
-            "GET": {
-                "info": "/api/v4/user/info",
-                "profile": "/api/v4/profile/",
-                "user_activity": "/api/v4/profile/activity/", # + user_id
-                "season": "/api/v4/season/list",
-                "season_rank": "/api/v4/season/user/rank/",
-                "connection_status": "/api/v4/connection/status",
-                "current_machines": "/api/v4/machine/paginated?per_page=100",
-                "active_machine": "/api/v4/machine/active",
-                "active_season_machine": "/api/v4/season/machine/active",
-                "active_machine_info": "/api/v4/machine/info/",
-                "search": "/api/v4/search/fetch?query=", # + keyword + "&tags=" + filter
-            },
-            "POST": {
-                "spawn_machine": "/api/v4/vm/spawn", # POST DATA {"machine_id": id}
-                "terminate_machine": "/api/v4/vm/terminate", # POST DATA {"machine_id": id}
-                "reset_machine": "/api/v4/vm/reset", # POST DATA {"machine_id": id}
-            },
-        }
-        self.headers = {
-            "Authorization": f"Bearer {htb_token}",
-            "Accept": "application/json, text/plain, */*",
-            "User-Agent": "HTBClient/1.0.0"
-        }
+
+    TOKEN_NAME = "HTB_TOKEN"
+    base_url = "https://labs.hackthebox.com"
+    endpoints = {
+        "GET": {
+            "info": "/api/v4/user/info",
+            "profile": "/api/v4/profile/",
+            "user_activity": "/api/v4/profile/activity/", # + user_id
+            "season": "/api/v4/season/list",
+            "season_rank": "/api/v4/season/user/rank/",
+            "connection_status": "/api/v4/connection/status",
+            "current_machines": "/api/v4/machine/paginated?per_page=100",
+            "active_machine": "/api/v4/machine/active",
+            "active_season_machine": "/api/v4/season/machine/active",
+            "active_machine_info": "/api/v4/machine/info/",
+            "search": "/api/v4/search/fetch?query=", # + keyword + "&tags=" + filter
+        },
+        "POST": {
+            "spawn_machine": "/api/v4/vm/spawn", # POST DATA {"machine_id": id}
+            "terminate_machine": "/api/v4/vm/terminate", # POST DATA {"machine_id": id}
+            "reset_machine": "/api/v4/vm/reset", # POST DATA {"machine_id": id}
+        },
+    }
+    headers = {
+        "Authorization": f"Bearer {APIToken(TOKEN_NAME).get_token()}",
+        "Accept": "application/json, text/plain, */*",
+        "User-Agent": "HTBClient/1.0.0"
+    }
+
+    def __init__(self):
+        
         self.current_season = {
             "id" : None,
             "name" : None
@@ -521,18 +524,12 @@ class HTBClient:
 if __name__ == "__main__":
     import asyncio
 
-    # get api key from environment variable and throw error if not found
-    ENV_NAME = "HTB_API_KEY"
-    API_KEY = os.environ[ENV_NAME] if ENV_NAME in os.environ else None
-    if API_KEY is None:
-        raise Exception(f"Environment variable {ENV_NAME} not found")
-    
     async def main():
-        htb = HTBClient(API_KEY)
+        htb = HTBClient()
         # htb.get_profile()
 
         console = Console()
-        result = await htb.get_search_results("machines", "pov")
+        result = await htb.get_search_results("users", "sar1n")
         console.print(result)
 
     asyncio.run(main())

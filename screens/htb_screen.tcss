@@ -1,7 +1,7 @@
 Screen {
     layout: grid;
     grid-size: 8;
-    grid-rows: 0.75fr 1fr;
+    grid-rows: 2.5fr 2.5fr 0.75fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
 }
 
 Header {
@@ -10,70 +10,49 @@ Header {
     text-style: bold;
 }
 
-RichLog {
-    padding: 1 0 1 2;
-    scrollbar-background: transparent;
-    scrollbar-color: green;
-    scrollbar-size-vertical: 1;
-    scrollbar-size-horizontal: 0;
-    background: #000;
-}
-
-Input:focus {
-    border: tall #37ff0f;
-}
-
-Input:blur {
-    border: tall #000;
-}
-
-#sidebar {
-    column-span: 3;
-    row-span: 6;
+#player_container {
+    layout: horizontal;
+    column-span: 8;
+    row-span: 1;
     background: #111;
 }
 
 #main {
-    column-span: 5;
-    row-span: 6;
+    column-span: 6;
+    row-span: 4;
     background: #000;
 }
 
-# #player_stats_container {
-#     column-span: 3;
-#     row-span: 3;
-#     height: 43%;
-#     background: #111;
-# }
-
-# #player_activity_container {
-#     column-span: 3;
-#     row-span: 3;
-#     max-height: 100%;
-#     background: #000;
-#     overflow: hidden auto;
-# }
-
-
 PlayerStats {
-    height: 43%;
-    # color: #37ff0f;
+    width: 35%;
+    height: 100%;
     color: #0021B2;
     border: #0537ff;
+}
+
+#machines_container {
+    layout: horizontal;
+    height: 100%;
+    column-span: 8;
+    background: #111;
 }
 
 CurrentMachines {
-    height: 57%;
+    min-height: 100%;
+    height: auto;
     color: #0021B2;
-    border: #0537ff;
 }
 
 VerticalScroll {
+    height: 100%;
     border: #0537ff;
-    scrollbar-background: transparent;
-    scrollbar-color: green;
+    scrollbar-background: #111;
+    scrollbar-background-active: transparent;
+    scrollbar-background-hover: transparent;
+    scrollbar-color: #0021B2;
+    scrollbar-color-active: chartreuse;
+    scrollbar-color-hover: green;
     scrollbar-size-vertical: 1;
-    scrollbar-size-horizontal: 0;
 }
 
 PlayerActivity {
@@ -82,15 +61,15 @@ PlayerActivity {
     color: #0021B2;
 }
 
-#footer_left {
+#connection_container {
     column-span: 4;
-    row-span: 2;
+    row-span: 1;
     background: #111;
 }
 
-#footer_right {
+#active_machine_container {
     column-span: 4;
-    row-span: 2;
+    row-span: 1;
     background: #111;
 }
 
@@ -99,9 +78,13 @@ VPNConnection {
     color: #0021B2;
 }
 
-#active_machine {
+ActiveMachine {
     border: #0537ff;
     color: #0021B2;
+}
+
+Footer {
+    background: #171717;
 }
 
 #ping {

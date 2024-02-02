@@ -69,11 +69,13 @@ class CurrentMachines(Static):
                     for machine in data["data"]:
                         self.machine_list.append(
                             {
+                                "id": machine["id"],
                                 "name": machine["name"],
                                 "os": machine["os"],
                                 "difficulty": machine["difficultyText"],
                                 "user_owned": machine["authUserInUserOwns"],
-                                "root_owned": machine["authUserInRootOwns"]
+                                "root_owned": machine["authUserInRootOwns"],
+                                "rating": machine["star"]
                             }
                         )
 
@@ -95,13 +97,20 @@ class CurrentMachines(Static):
         table.add_column()
         table.add_column()
         table.add_column()
+        table.add_column()
+        table.add_column()
+        table.add_column()
+        table.add_column()
 
         for machine in self.machine_list:
             table.add_row(
+                str(machine["id"]),
                 machine["name"],
-                machine["os"],                                
-                "U" if machine["user_owned"] else "",
-                "R" if machine["root_owned"] else "",
+                machine["os"],    
+                machine["difficulty"],                            
+                "[chartreuse1 bold]owned user" if machine["user_owned"] else "",
+                "[chartreuse1 bold]owned root" if machine["root_owned"] else "",
+                str(machine["rating"])
             )
 
         return table

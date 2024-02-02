@@ -111,16 +111,16 @@ class PlayerActivity(Static):
         )
 
         table.add_column(ratio=3, no_wrap=True, justify="full")
-        table.add_column(ratio=2, no_wrap=True, justify="right")
-        table.add_column(ratio=2, no_wrap=True, justify="right")
-        table.add_column(ratio=1, no_wrap=True, justify="right")
+        table.add_column(ratio=2, no_wrap=True, justify="full")
+        table.add_column(ratio=2, no_wrap=True, justify="full")
+        table.add_column(ratio=1, no_wrap=True, justify="full")
 
         for activity in self.activity_data:
             table.add_row(
-                f"[b][chartreuse1]{activity["flag_title"]}" if "flag_title" in activity else f"[b][chartreuse1]{activity["type"]} flag",
-                f"{activity["name"]} {activity["object_type"]}",
+                f"[b][white]{activity["flag_title"]}" if "flag_title" in activity else f"[b][white]{activity["type"]} flag",
+                f"[b]{activity["name"]}[/b] {activity["object_type"]}",
                 f"{activity["date_diff"]}",
-                f"+{activity['points']}pts"
+                f"[chartreuse1]+{activity['points']}pts"
             )
 
         return table
