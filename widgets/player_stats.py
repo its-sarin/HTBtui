@@ -111,6 +111,7 @@ class PlayerStats(Static):
 
                     self.post_message(DebugMessage({"Profile Data": data}, DebugLevel.MEDIUM))
 
+                    self.user_data["id"] = data['profile']['id']
                     self.user_data["name"] = data['profile']['name']
                     self.user_data["rank"] = data['profile']['rank_id']
                     self.user_data["ranking"] = data['profile']['ranking']
@@ -204,6 +205,7 @@ class PlayerStats(Static):
 
         # user stats
         table.add_row("Name", f"[#37ff0f]{self.user_data["name"]}")
+        table.add_row("User ID", str(self.user_data["id"]))
         table.add_row("Rank", self.id_to_rank(self.user_data["rank"]))
         table.add_row("Progress", str(self.user_data["rank_progress"])+ "%")
         table.add_row("Ranking", str(self.user_data["ranking"]))        

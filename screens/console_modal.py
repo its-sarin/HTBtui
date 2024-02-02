@@ -142,7 +142,8 @@ class ConsoleModal(ModalScreen):
             log.write(table)
             log.write("\n")
             log.write(f"[*] Found {len(data[search_type])} {search_type} with name: {search_term}")
-            log.write(f"[*] Use the id to start the machine with: start <id>")
+            if search_type == "machine":
+                log.write(f"[*] Use the id to start the machine with: start <id>")            
         except Exception as e:
             log.write(f"Error: {str(e)}")
             log.write(f"[!] Error: {e}")
