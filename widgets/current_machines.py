@@ -29,8 +29,9 @@ class CurrentMachines(DataTable):
         self.add_column(label="Name")
         self.add_column(label="OS")
         self.add_column(label="Difficulty")
-        self.add_column(label="User Owned")
-        self.add_column(label="Root Owned")
+        self.add_column(label="User")
+        self.add_column(label="Root")
+        self.add_column(label="Points")
         self.add_column(label="Rating")
 
     async def on_mount(self) -> None:
@@ -82,6 +83,7 @@ class CurrentMachines(DataTable):
                                 "difficulty": machine["difficultyText"],
                                 "user_owned": machine["authUserInUserOwns"],
                                 "root_owned": machine["authUserInRootOwns"],
+                                "points": machine["points"],
                                 "rating": machine["star"]
                             }
                         )
@@ -103,6 +105,7 @@ class CurrentMachines(DataTable):
                 machine["difficulty"],                            
                 "✅" if machine["user_owned"] else "❌",
                 "✅" if machine["root_owned"] else "❌",
+                str(machine["points"]),
                 str(machine["rating"])
             )
 
