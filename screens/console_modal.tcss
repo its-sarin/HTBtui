@@ -1,3 +1,9 @@
+$secondary: #9fef00;
+$background: #111927;
+$background-darken-1: #171717;
+$border: #5b72a4;
+$color: #a4b1cd;
+
 ConsoleModal {
     layout: horizontal;
     align: center middle;
@@ -6,14 +12,14 @@ ConsoleModal {
 #console_container {
     width: 80%;
     height: 80%;
-    background: #000;
-    border: #0537ff;
+    background: $background-darken-1;
+    padding: 1;
 }
 
 #console {
     margin: 1;
     padding: 1 0 1 2;
-    border: solid #111;
+    border: outer #111;
     background: #000;
     scrollbar-background: transparent;
     scrollbar-background-active: #111;
@@ -26,13 +32,14 @@ ConsoleModal {
 
 #input {
     margin: 1;
-    background: #111;
 }
 
-Input:focus {
-    border: tall #37ff0f;
+Input#input:focus {
+    border: tall #111;
+    background: #000;
 }
 
-Input:blur {
-    border: tall #000;
+Input#input:blur {
+    border: tall #1a1a1a;
+    background: #262626;
 }

@@ -1,3 +1,9 @@
+$secondary: #9fef00;
+$background: #111927;
+$background-darken-1: #171717;
+$border: #5b72a4;
+$color: #a4b1cd;
+
 Screen {
     layout: grid;
     grid-size: 8;
@@ -5,8 +11,8 @@ Screen {
 }
 
 Header {
-    color: #37ff0f;
-    background: #171717;
+    color: $secondary;
+    background: $background-darken-1;
     text-style: bold;
 }
 
@@ -14,20 +20,20 @@ Header {
     layout: horizontal;
     column-span: 8;
     row-span: 1;
-    background: #111;
+    color: $color;
+    background: $background;
 }
 
-#main {
-    column-span: 6;
-    row-span: 4;
-    background: #000;
-}
+# #main {
+#     column-span: 6;
+#     row-span: 4;
+#     background: #000;
+# }
 
 PlayerStats {
     width: 35%;
     height: 100%;
-    color: #0021B2;
-    border: #0537ff;
+    border: $border;
 }
 
 #machines_container {
@@ -37,54 +43,101 @@ PlayerStats {
     background: #111;
 }
 
-CurrentMachines {
+CurrentMachines, PlayerActivity {
     min-height: 100%;
     height: auto;
-    color: #0021B2;
+    background: $background;
+    color: $color;
 }
 
-VerticalScroll {
-    height: 100%;
-    border: #0537ff;
+CurrentMachines > .datatable--header, 
+PlayerActivity > .datatable--header {
+    background: #1a2332;
+}
+
+CurrentMachines > .datatable--header-hover, 
+PlayerActivity > .datatable--header-hover {
+    background: $secondary 60%;
+ }
+
+ PlayerActivity {
+    max-width: 65%;
+    min-width: 100%;
+    border: $border;
     scrollbar-background: #111;
     scrollbar-background-active: transparent;
     scrollbar-background-hover: transparent;
-    scrollbar-color: #0021B2;
-    scrollbar-color-active: chartreuse;
-    scrollbar-color-hover: green;
-    scrollbar-size-vertical: 1;
+    scrollbar-color: $secondary 50%;
+    scrollbar-color-active: $secondary;
+    scrollbar-color-hover: $secondary 70%;
+    scrollbar-size: 0 1;
 }
 
-PlayerActivity {
-    min-height: 100%;
-    height: auto;
-    color: #0021B2;
+CurrentMachines {
+    border: $border;
+    scrollbar-background: #111;
+    scrollbar-background-active: transparent;
+    scrollbar-background-hover: transparent;
+    scrollbar-color: $secondary 50%;
+    scrollbar-color-active: $secondary;
+    scrollbar-color-hover: $secondary 70%;
+    scrollbar-size-vertical: 1;
+    scrollbar-size-horizontal: 1;
 }
+
+# #player_activity_scrollable_container {
+#     border: $border;
+#     scrollbar-background: #111;
+#     scrollbar-background-active: transparent;
+#     scrollbar-background-hover: transparent;
+#     scrollbar-color: $secondary 50%;
+#     scrollbar-color-active: $secondary;
+#     scrollbar-color-hover: $secondary 70%;
+#     scrollbar-size: 0 0;
+# }
+
 
 #connection_container {
     column-span: 4;
     row-span: 1;
-    background: #111;
+    background: $background;
 }
 
 #active_machine_container {
     column-span: 4;
     row-span: 1;
-    background: #111;
+    background: $background;
 }
 
-VPNConnection {
-    border: #0537ff;
-    color: #0021B2;
+VPNConnection, ActiveMachine {
+    border: $border;
+    color: $color;
 }
 
-ActiveMachine {
-    border: #0537ff;
-    color: #0021B2;
-}
+# ActiveMachine {
+#     border: #0537ff;
+#     color: #0021B2;
+# }
 
 Footer {
-    background: #171717;
+    background: $background-darken-1;
+    color: $color;
+}
+
+Footer > .footer--highlight {
+    background: transparent;
+    color: auto;
+}
+
+Footer > .footer--highlight-key {
+    background: $secondary;
+    text-style: bold;
+    color: auto;
+}
+
+Footer > .footer--key {
+    text-style: bold;
+    background: transparent;
 }
 
 #ping {
@@ -98,3 +151,50 @@ Footer {
     height: 100%;    
     content-align: center middle;
 }
+
+
+
+# DataTable > .datatable--header {
+#     text-style: bold;
+#     background: $primary;
+#     color: $text;
+# }
+# DataTable > .datatable--fixed {
+#     background: $primary 50%;
+#     color: $text;
+# }
+
+# DataTable > .datatable--odd-row {
+
+# }
+
+# DataTable > .datatable--even-row {
+#     background: $primary 10%;
+# }
+
+# DataTable > .datatable--cursor {
+#     background: $secondary;
+#     color: $text;
+# }
+
+# DataTable > .datatable--fixed-cursor {
+#     background: $secondary 92%;
+#     color: $text;
+# }
+
+# DataTable > .datatable--header-cursor {
+#     background: $secondary-darken-1;
+#     color: $text;
+# }
+
+# DataTable > .datatable--header-hover {
+#     background: $secondary 30%;
+# }
+
+# DataTable:dark > .datatable--even-row {
+#     background: $primary 15%;
+# }
+
+# DataTable > .datatable--hover {
+#     background: $secondary 20%;
+# }

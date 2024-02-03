@@ -142,7 +142,7 @@ class ActiveMachine(Static):
 
         table.add_row(
             self.active_machine_data["name"],
-            f"[#37ff0f]{self.active_machine_data["ip"]}",
+            f"[#9fef00]{self.active_machine_data["ip"]}",
             f"# Players {self.active_machine_data["playInfo"]["active_player_count"]}"
             )
         table.add_row(

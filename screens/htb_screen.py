@@ -1,25 +1,17 @@
 from textual import on
 from textual.screen import Screen
-from textual.widgets import Header, RichLog, Input, Footer
-from textual.containers import Container, VerticalScroll
+from textual.widgets import Header, RichLog, Footer
+from textual.containers import Container, VerticalScroll, ScrollableContainer
 from textual.app import ComposeResult
-from textual.suggester import SuggestFromList
 
-from rich.table import Table
-from rich import box
-
-from htb import HTBClient
-from htb import SearchFilter
 
 from widgets.player_stats import PlayerStats
 from widgets.current_machines import CurrentMachines
 from widgets.vpn_connection import VPNConnection
 from widgets.player_activity import PlayerActivity
 from widgets.active_machine import ActiveMachine
-from utilities.api_token import APIToken
 from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
-from screens.console_modal import ConsoleModal
 
 
 class HTBScreen(Screen):    
@@ -71,15 +63,11 @@ class HTBScreen(Screen):
         player_stats_widget.border_title = "Player Stats"
         player_stats_widget.classes = "box"
 
-        player_activity_widget = VerticalScroll(
-                PlayerActivity()
-            )
+        player_activity_widget = PlayerActivity()
         player_activity_widget.border_title = "Player Activity"
         player_activity_widget.classes = "box"
 
-        current_machines_widget =VerticalScroll(
-                CurrentMachines()
-            )
+        current_machines_widget = CurrentMachines()
         current_machines_widget.border_title = "Current Machines"
         current_machines_widget.classes = "box"
 

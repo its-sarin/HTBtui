@@ -1,15 +1,12 @@
 import httpx
 
-from rich.table import Table
-from rich import box
-
-from textual.widgets import Static
+from textual.widgets import DataTable
 
 from utilities.api_token import APIToken
 from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 
-class CurrentMachines(Static):
+class CurrentMachines(DataTable):
     """Static widget that shows the current machines."""
 
     token_name = "HTB_TOKEN"
@@ -25,6 +22,16 @@ class CurrentMachines(Static):
         super().__init__()        
         self.machine_list = []
         self.loading = True
+        self.show_header = True
+        self.cursor_type = "row"
+
+        self.add_column(label="ID")
+        self.add_column(label="Name")
+        self.add_column(label="OS")
+        self.add_column(label="Difficulty")
+        self.add_column(label="User Owned")
+        self.add_column(label="Root Owned")
+        self.add_column(label="Rating")
 
     async def on_mount(self) -> None:
         """Mount the widget."""
@@ -36,9 +43,9 @@ class CurrentMachines(Static):
         Updates the machine list widget with the latest machine list data from HTB.
         """       
         try:
-            table: Table = await self.get_machine_list()
+            await self.get_machine_list()
             self.loading = False
-            self.update(table)
+            self.make_machine_list()
         except Exception as e:
             self.update(f"Error: {e}")
 
@@ -86,31 +93,18 @@ class CurrentMachines(Static):
             return f"Error: {e}"
 
     def make_machine_list(self):
-        table = Table(
-            box=box.SIMPLE,
-            show_header=False,
-            show_footer=False,
-            pad_edge=False,
-            expand=True
-        )
-
-        table.add_column()
-        table.add_column()
-        table.add_column()
-        table.add_column()
-        table.add_column()
-        table.add_column()
-        table.add_column()
+        
 
         for machine in self.machine_list:
-            table.add_row(
+            self.add_row(
                 str(machine["id"]),
                 machine["name"],
                 machine["os"],    
                 machine["difficulty"],                            
-                "[chartreuse1 bold]owned user" if machine["user_owned"] else "",
-                "[chartreuse1 bold]owned root" if machine["root_owned"] else "",
+                "✅" if machine["user_owned"] else "❌",
+                "✅" if machine["root_owned"] else "❌",
                 str(machine["rating"])
             )
 
-        return table
+
+   

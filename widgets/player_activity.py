@@ -1,9 +1,6 @@
 import httpx
 
-from rich.table import Table
-from rich import box
-
-from textual.widgets import Static
+from textual.widgets import DataTable
 
 from utilities.api_token import APIToken
 from enums.debug_level import DebugLevel
@@ -11,7 +8,7 @@ from messages.debug_message import DebugMessage
 
 
 
-class PlayerActivity(Static):
+class PlayerActivity(DataTable):
     """Static widget that shows the player stats."""
 
     token_name = "HTB_TOKEN"
@@ -34,6 +31,15 @@ class PlayerActivity(Static):
         }
         self.activity_data = []
 
+        self.show_header = True
+        self.cursor_type = "row"
+        
+        self.add_column(label="Activity")
+        self.add_column(label="Name")
+        self.add_column(label="Type")
+        self.add_column(label="Date")
+        self.add_column(label="Points")
+
     # def on_ready(self) -> None:
     #     self.loading = True
 
@@ -48,9 +54,9 @@ class PlayerActivity(Static):
         Updates the machine list widget with the latest machine list data from HTB.
         """       
         try:
-            table: Table = await self.get_activity_list()
+            await self.get_activity_list()
             self.loading = False
-            self.update(table)
+            self.make_activity_list()
         except Exception as e:
             self.update(f"Error: {e}")
 
@@ -101,26 +107,13 @@ class PlayerActivity(Static):
             except Exception as e:
                 return f"Error: {e}"
 
-    def make_activity_list(self):
-        table = Table(
-            box=box.SIMPLE,
-            show_header=False,
-            show_footer=False,
-            pad_edge=False,
-            expand=True
-        )
-
-        table.add_column(ratio=3, no_wrap=True, justify="full")
-        table.add_column(ratio=2, no_wrap=True, justify="full")
-        table.add_column(ratio=2, no_wrap=True, justify="full")
-        table.add_column(ratio=1, no_wrap=True, justify="full")
+    def make_activity_list(self): 
 
         for activity in self.activity_data:
-            table.add_row(
-                f"[b][white]{activity["flag_title"]}" if "flag_title" in activity else f"[b][white]{activity["type"]} flag",
-                f"[b]{activity["name"]}[/b] {activity["object_type"]}",
+            self.add_row(
+                f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]} flag",
+                f"[b]{activity["name"]}[/b]",
+                f"{activity['object_type']}",
                 f"{activity["date_diff"]}",
-                f"[chartreuse1]+{activity['points']}pts"
+                f"[#9fef00]+{activity['points']}pts"
             )
-
-        return table
