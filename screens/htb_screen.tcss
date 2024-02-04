@@ -15,8 +15,8 @@ Header {
 }
 
 Container#player_container {
+    height: 1fr;
     layout: horizontal;
-    height: 40%;
     color: $color;
     background: $background;
 }
@@ -52,7 +52,7 @@ PlayerActivity {
 }
 
 Container#machines_container {
-    height: 47%;
+    height: 1fr;
     width: 100%;
 }
 
@@ -116,7 +116,7 @@ CurrentMachines, RetiredMachines {
 }
 
 Horizontal#bottom_container {
-    height: 13%;
+    height: 0.25fr;
     background: $background;
     content-align: center middle;
 }
@@ -150,12 +150,12 @@ Footer > .footer--key {
     background: transparent;
 }
 
-#ping {
-    dock: bottom;
-    margin: 1 2;
-    layer: 1;
-    width: 6;
-}
+# #ping {
+#     dock: bottom;
+#     margin: 1 2;
+#     layer: 1;
+#     width: 6;
+# }
 
 # .box {
 #     height: 100%;    
