@@ -5,9 +5,7 @@ $border: #5b72a4;
 $color: #a4b1cd;
 
 Screen {
-    layout: grid;
-    grid-size: 8;
-    grid-rows: 2.5fr 2.5fr 0.75fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
+    layout: vertical;
 }
 
 Header {
@@ -16,53 +14,84 @@ Header {
     text-style: bold;
 }
 
-#player_container {
+Container#player_container {
     layout: horizontal;
-    column-span: 8;
-    row-span: 1;
+    height: 40%;
     color: $color;
     background: $background;
 }
 
-# #main {
-#     column-span: 6;
-#     row-span: 4;
-#     background: #000;
-# }
-
 PlayerStats {
-    width: 35%;
+    width: 33%;
     height: 100%;
     border: $border;
 }
 
-#machines_container {
-    layout: horizontal;
-    height: 100%;
-    column-span: 8;
-    background: #111;
+PlayerActivity {
+    height: 100%;    
 }
 
-CurrentMachines, PlayerActivity {
-    min-height: 100%;
-    height: auto;
+#buttons {
+    height: 2;
     background: $background;
-    color: $color;
 }
 
-CurrentMachines > .datatable--header, 
+#buttons > Button {
+    min-width:1;
+    height: 1;
+    max-height: 1;
+    border: none;
+    color: $color;
+    margin: 0 1;
+}
+
+#buttons > Button:hover,
+#buttons > Button:focus {
+    color: auto;
+    background: $secondary
+}
+
+Container#machines_container {
+    height: 47%;
+    width: 100%;
+}
+
+ContentSwitcher#machines_switcher {
+    width: 100%;
+    height: 100%;
+}
+
+Container#current_machines {
+    width: 100%;
+    height: 100%;
+}
+
+Container#retired_machines {
+    width: 100%;
+    height: 100%;
+}
+
+CurrentMachines, RetiredMachines {
+    min-height: 100%;
+    max-height: 100%;
+    height: auto;
+}
+
+CurrentMachines > .datatable--header,
+RetiredMachines > .datatable--header,
 PlayerActivity > .datatable--header {
     background: #1a2332;
 }
 
-CurrentMachines > .datatable--header-hover, 
+CurrentMachines > .datatable--header-hover,
+RetiredMachines > .datatable--header-hover, 
 PlayerActivity > .datatable--header-hover {
     background: $secondary 60%;
  }
 
  PlayerActivity {
-    max-width: 65%;
-    min-width: 100%;
+    background: $background;
+    color: $color;
     border: $border;
     scrollbar-background: #111;
     scrollbar-background-active: transparent;
@@ -73,7 +102,9 @@ PlayerActivity > .datatable--header-hover {
     scrollbar-size: 0 1;
 }
 
-CurrentMachines {
+CurrentMachines, RetiredMachines {
+    background: $background;
+    color: $color;
     border: $border;
     scrollbar-background: #111;
     scrollbar-background-active: transparent;
@@ -82,42 +113,21 @@ CurrentMachines {
     scrollbar-color-active: $secondary;
     scrollbar-color-hover: $secondary 70%;
     scrollbar-size-vertical: 1;
-    scrollbar-size-horizontal: 1;
 }
 
-# #player_activity_scrollable_container {
-#     border: $border;
-#     scrollbar-background: #111;
-#     scrollbar-background-active: transparent;
-#     scrollbar-background-hover: transparent;
-#     scrollbar-color: $secondary 50%;
-#     scrollbar-color-active: $secondary;
-#     scrollbar-color-hover: $secondary 70%;
-#     scrollbar-size: 0 0;
-# }
-
-
-#connection_container {
-    column-span: 4;
-    row-span: 1;
+Horizontal#bottom_container {
+    height: 13%;
     background: $background;
-}
-
-#active_machine_container {
-    column-span: 4;
-    row-span: 1;
-    background: $background;
+    content-align: center middle;
 }
 
 VPNConnection, ActiveMachine {
+    height: 100%;
+    min-height: 100%;
     border: $border;
     color: $color;
+    content-align: center middle;
 }
-
-# ActiveMachine {
-#     border: #0537ff;
-#     color: #0021B2;
-# }
 
 Footer {
     background: $background-darken-1;
@@ -147,54 +157,7 @@ Footer > .footer--key {
     width: 6;
 }
 
-.box {
-    height: 100%;    
-    content-align: center middle;
-}
-
-
-
-# DataTable > .datatable--header {
-#     text-style: bold;
-#     background: $primary;
-#     color: $text;
-# }
-# DataTable > .datatable--fixed {
-#     background: $primary 50%;
-#     color: $text;
-# }
-
-# DataTable > .datatable--odd-row {
-
-# }
-
-# DataTable > .datatable--even-row {
-#     background: $primary 10%;
-# }
-
-# DataTable > .datatable--cursor {
-#     background: $secondary;
-#     color: $text;
-# }
-
-# DataTable > .datatable--fixed-cursor {
-#     background: $secondary 92%;
-#     color: $text;
-# }
-
-# DataTable > .datatable--header-cursor {
-#     background: $secondary-darken-1;
-#     color: $text;
-# }
-
-# DataTable > .datatable--header-hover {
-#     background: $secondary 30%;
-# }
-
-# DataTable:dark > .datatable--even-row {
-#     background: $primary 15%;
-# }
-
-# DataTable > .datatable--hover {
-#     background: $secondary 20%;
+# .box {
+#     height: 100%;    
+#     content-align: center middle;
 # }

@@ -1,6 +1,7 @@
 from textual import on
 from textual.app import App
 from textual.widgets import RichLog
+from textual.css.query import NoMatches
 
 from screens.htb_screen import HTBScreen
 from screens.console_modal import ConsoleModal
@@ -9,7 +10,7 @@ from messages.debug_message import DebugMessage
 from enums.debug_level import DebugLevel
 
 
-class spellb00k(App):
+class HTBtui(App):
 
     BINDINGS = [("`", "request_console", "Show Console")]
         
@@ -18,7 +19,9 @@ class spellb00k(App):
         "console_modal": ConsoleModal()
     }
 
-    debug_level = DebugLevel.NONE
+    debug_level = DebugLevel.MEDIUM
+
+    message_queue = []
     
     def on_ready(self) -> None:
         """
@@ -39,6 +42,21 @@ class spellb00k(App):
         # log.write("Console requested")
         self.push_screen("console_modal")
         
+    # @on(DebugMessage)
+    # def log_debug_messages(self, message: DebugMessage) -> None:
+    #     """
+    #     Logs debug messages to the console.
+
+    #     Args:
+    #         message (DebugMessage): The debug message to log.
+    #     """
+    #     if message.debug_level.value <= self.debug_level.value:
+    #         try:
+    #             log = self.query_one(RichLog)
+    #             log.write(message.data)
+    #         except Exception as e:
+    #             print(f"Error: {e}")
+
     @on(DebugMessage)
     def log_debug_messages(self, message: DebugMessage) -> None:
         """
@@ -51,12 +69,15 @@ class spellb00k(App):
             try:
                 log = self.query_one(RichLog)
                 log.write(message.data)
-            except Exception as e:
-                print(f"Error: {e}")
+            except NoMatches:
+                self.add_message_to_queue(message.data)
+                
+    def add_message_to_queue(self, message):
+        self.message_queue.append(message)
 
 
 if __name__ == "__main__":
-    app = spellb00k()
+    app = HTBtui()
     app.run()
     
     

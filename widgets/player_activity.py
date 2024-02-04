@@ -7,7 +7,6 @@ from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 
 
-
 class PlayerActivity(DataTable):
     """Static widget that shows the player stats."""
 
@@ -35,13 +34,10 @@ class PlayerActivity(DataTable):
         self.cursor_type = "row"
         
         self.add_column(label="Activity")
-        self.add_column(label="Name")
-        self.add_column(label="Type")
+        self.add_column(label="Target")
         self.add_column(label="Date")
         self.add_column(label="Points")
 
-    # def on_ready(self) -> None:
-    #     self.loading = True
 
     async def on_mount(self) -> None:
         """Mount the widget."""
@@ -108,12 +104,11 @@ class PlayerActivity(DataTable):
                 return f"Error: {e}"
 
     def make_activity_list(self): 
-
         for activity in self.activity_data:
             self.add_row(
-                f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]} flag",
+                f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]}",
                 f"[b]{activity["name"]}[/b]",
-                f"{activity['object_type']}",
+                # {activity['object_type']}
                 f"{activity["date_diff"]}",
                 f"[#9fef00]+{activity['points']}pts"
             )

@@ -6,12 +6,12 @@ from utilities.api_token import APIToken
 from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 
-class CurrentMachines(DataTable):
-    """Static widget that shows the current machines."""
+class RetiredMachines(DataTable):
+    """DataTable widget that shows retired machines."""
 
     token_name = "HTB_TOKEN"
     base_url = "https://labs.hackthebox.com"
-    endpoint = "/api/v4/machine/paginated?per_page=100"
+    endpoint = "/api/v4/machine/list/retired/paginated?per_page=100"
     headers = {
             "Authorization": f"Bearer {APIToken(token_name).get_token()}",
             "Accept": "application/json, text/plain, */*",

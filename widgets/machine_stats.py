@@ -11,7 +11,7 @@ from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 
 
-class PlayerStats(Static):
+class MachineStats(Static):
     """Static widget that shows the player stats."""
 
     token_name = "HTB_TOKEN"
@@ -27,6 +27,101 @@ class PlayerStats(Static):
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }
+    
+    """
+    {
+        "info": {
+            "id": 581,
+            "name": "Corporate",
+            "os": "Linux",
+            "active": 1,
+            "retired": 0,
+            "points": 50,
+            "static_points": 50,
+            "release": "2023-12-16T19:00:00.000000Z",
+            "user_owns_count": 468,
+            "root_owns_count": 327,
+            "free": true,
+            "authUserInUserOwns": true,
+            "authUserInRootOwns": null,
+            "authUserHasReviewed": false,
+            "authUserHasSubmittedMatrix": false,
+            "stars": 4,
+            "reviews_count": 45,
+            "difficulty": 87,
+            "avatar": "/storage/avatars/380bc40d3a6bd3ba99da465177e8593e.png",
+            "feedbackForChart": {
+                "counterCake": 14,
+                "counterVeryEasy": 1,
+                "counterEasy": 4,
+                "counterTooEasy": 7,
+                "counterMedium": 15,
+                "counterBitHard": 15,
+                "counterHard": 45,
+                "counterTooHard": 77,
+                "counterExHard": 90,
+                "counterBrainFuck": 283
+            },
+            "difficultyText": "Insane",
+            "isCompleted": true,
+            "last_reset_time": null,
+            "playInfo": {
+                "isSpawned": false,
+                "isSpawning": false,
+                "isActive": null,
+                "active_player_count": null,
+                "expires_at": null
+            },
+            "maker": {
+                "id": 269501,
+                "name": "JoshSH",
+                "avatar": "/storage/avatars/86faa793f27a516f07c1237351a618a8.png",
+                "isRespected": false
+            },
+            "maker2": null,
+            "info_status": null,
+            "authUserFirstUserTime": "1M 4D 16H",
+            "authUserFirstRootTime": null,
+            "user_can_review": false,
+            "can_access_walkthrough": false,
+            "has_changelog": true,
+            "userBlood": {
+                "user": {
+                    "name": "m4cz",
+                    "id": 275298,
+                    "avatar": "/storage/avatars/e02601e7f4cb3dce6f3744254dcc4f7d.png"
+                },
+                "created_at": "2023-12-17 23:12:38",
+                "blood_difference": "1D 2H 12M"
+            },
+            "userBloodAvatar": "/storage/avatars/e02601e7f4cb3dce6f3744254dcc4f7d.png",
+            "rootBlood": {
+                "user": {
+                    "name": "Blindhero",
+                    "id": 201283,
+                    "avatar": "/storage/avatars/892282c51c21f2e9b949b590b11a4db0.png"
+                },
+                "created_at": "2023-12-18 01:05:57",
+                "blood_difference": "1D 4H 5M"
+            },
+            "rootBloodAvatar": "/storage/avatars/892282c51c21f2e9b949b590b11a4db0.png",
+            "firstUserBloodTime": "1D 2H 12M",
+            "firstRootBloodTime": "1D 4H 5M",
+            "recommended": 0,
+            "sp_flag": 0,
+            "season_id": 3,
+            "isGuidedEnabled": false,
+            "start_mode": "spawn",
+            "show_go_vip": false,
+            "show_go_vip_server": false,
+            "ownRank": null,
+            "academy_modules": [],
+            "machine_mode": null,
+            "lab_server": null
+        }
+    }
+
+    """
 
     def __init__(self) -> None:
         super().__init__()        
