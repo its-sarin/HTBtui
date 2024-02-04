@@ -98,10 +98,10 @@ class HTBClient:
         }
         self.machine_list = []
         self.machine_difficulty_map = {
-            "Easy": "chartreuse2",
-            "Medium": "gold1",
-            "Hard": "indian_red1",
-            "Insane": "dark_violet"
+            "Easy": "#90cd3f",
+            "Medium": "#ffb83e",
+            "Hard": "#fe0000",
+            "Insane": "#c7c8cb"
         }
         self.machine_os_map = {
             "Linux": ":penguin:",

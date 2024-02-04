@@ -60,35 +60,32 @@ class HTBScreen(Screen):
         """
         player_stats_widget = PlayerStats()
         player_stats_widget.border_title = "Player Stats"
-        player_stats_widget.classes = "box"
 
         player_activity_widget = PlayerActivity()
         player_activity_widget.border_title = "Player Activity"
-        player_activity_widget.classes = "box"
 
         current_machines_widget = CurrentMachines()
         current_machines_widget.border_title = "Current Machines"
-        current_machines_widget.classes = "box"
         current_machines_widget.id = "current_machines"
 
         retired_machines_widget = RetiredMachines()
         retired_machines_widget.border_title = "Retired Machines"
-        retired_machines_widget.classes = "box"
         retired_machines_widget.id = "retired_machines"
 
         vpn_widget = VPNConnection()
         vpn_widget.border_title = "VPN Connection"
-        vpn_widget.classes = "box"
 
         active_machine_widget = ActiveMachine()
         active_machine_widget.border_title = "Active Machine"
-        active_machine_widget.classes = "box"
 
         yield Header(show_clock=True)
 
-        with Container(id="player_container"):
-            yield player_stats_widget
-            yield player_activity_widget
+        with Horizontal(id="player_container"):
+            with Container(id="player_stats_container") as player_stats_container:
+                player_stats_container.border_title = "Player Stats"
+                yield player_stats_widget
+            with Container(id="player_activity_container"):
+                yield player_activity_widget
         with Container(id="machines_container"):
             with Horizontal(id="buttons"):  
                 yield Button("Current Machines", id="current_machines")  

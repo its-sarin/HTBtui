@@ -17,6 +17,12 @@ class CurrentMachines(DataTable):
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }
+    machine_difficulty_map = {
+            "Easy": "#90cd3f",
+            "Medium": "#ffb83e",
+            "Hard": "#fe0000",
+            "Insane": "#c7c8cb"
+        }
 
     def __init__(self) -> None:
         super().__init__()        
@@ -30,7 +36,7 @@ class CurrentMachines(DataTable):
         self.add_column(label="ID")
         self.add_column(label="Name")
         self.add_column(label="OS")
-        self.add_column(label="Difficulty")
+        # self.add_column(label="Difficulty")
         self.add_column(label="User")
         self.add_column(label="Root")
         self.add_column(label="Points")
@@ -111,9 +117,9 @@ class CurrentMachines(DataTable):
         for machine in self.machine_list:
             self.add_row(                
                 str(machine["id"]),
-                machine["name"],
+                f"[{self.machine_difficulty_map[machine["difficulty"]]}]{machine["name"]}",
                 machine["os"],    
-                machine["difficulty"],                            
+                # machine["difficulty"],                            
                 "✅" if machine["user_owned"] else "❌",
                 "✅" if machine["root_owned"] else "❌",
                 str(machine["points"]),
