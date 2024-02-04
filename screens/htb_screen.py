@@ -86,7 +86,8 @@ class HTBScreen(Screen):
                 yield player_stats_widget
             with Container(id="player_activity_container"):
                 yield player_activity_widget
-        with Container(id="machines_container"):
+        with Container(id="machines_container") as machines_container:
+            machines_container.border_title = "Current Machines"
             with Horizontal(id="buttons"):  
                 yield Button("Current Machines", id="current_machines")  
                 yield Button("Retired Machines", id="retired_machines") 
@@ -120,3 +121,4 @@ class HTBScreen(Screen):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id 
+        self.query_one("#machines_container").border_title = "Current Machines" if event.button.id == "current_machines" else "Retired Machines"
