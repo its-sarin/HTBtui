@@ -117,4 +117,4 @@ class VPNConnection(Static):
         # table.add_row("Pwnbox Active" if self.connection_data["connection"]["through_pwnbox"] else "Pwnbox Inactive")
         # table.add_row(f"↑ {self.connection_data["connection"]["down"]} : ↓ {self.connection_data["connection"]["up"]}")
 
-        return f"{self.connection_data["location_type_friendly"]} : [#9fef00]{self.connection_data["connection"]["ip4"]}"
+        return f"{self.connection_data["location_type_friendly"]} :: [#9fef00]{self.connection_data["connection"]["ip4"]}"

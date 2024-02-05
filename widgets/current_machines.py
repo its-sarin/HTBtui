@@ -26,8 +26,9 @@ class CurrentMachines(DataTable):
 
     def __init__(self) -> None:
         super().__init__()        
-        self.machine_list = []
         self.loading = True
+        self.id = "current_machines"
+        self.machine_data = {}
         self.show_header = True
         self.cursor_type = "row"
 
@@ -74,7 +75,7 @@ class CurrentMachines(DataTable):
         Raises:
             str: An error message if an exception occurs during the retrieval process.
         """
-        self.machine_list = []
+        self.machine_data = {}
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.get(self.base_url + self.endpoint, headers=self.headers)
@@ -83,21 +84,77 @@ class CurrentMachines(DataTable):
 
                     self.post_message(DebugMessage({"Current Machines": data}, DebugLevel.MEDIUM))
 
+                    """
+                        {
+                            "id": 584,
+                            "avatar": "/storage/avatars/c31f19a4d6a3be17987a3ef98e2446a5.png",
+                            "name": "Analysis",
+                            "static_points": 40,
+                            "sp_flag": 0,
+                            "os": "Windows",
+                            "points": 40,
+                            "star": 4.2,
+                            "release": "2024-01-20T17:00:00.000000Z",
+                            "easy_month": 0,
+                            "poweroff": 0,
+                            "free": true,
+                            "difficulty": 61,
+                            "difficultyText": "Hard",
+                            "user_owns_count": 881,
+                            "authUserInUserOwns": false,
+                            "root_owns_count": 775,
+                            "authUserHasReviewed": false,
+                            "authUserInRootOwns": false,
+                            "isTodo": false,
+                            "is_competitive": true,
+                            "active": null,
+                            "feedbackForChart": {
+                                "counterCake": 26,
+                                "counterVeryEasy": 15,
+                                "counterEasy": 53,
+                                "counterTooEasy": 94,
+                                "counterMedium": 190,
+                                "counterBitHard": 197,
+                                "counterHard": 307,
+                                "counterTooHard": 142,
+                                "counterExHard": 43,
+                                "counterBrainFuck": 37
+                            },
+                            "ip": null,
+                            "playInfo": {
+                                "isActive": null,
+                                "expires_at": null
+                            },
+                            "labels": [
+                                {
+                                    "color": "blue",
+                                    "name": "SEASONAL"
+                                }
+                            ],
+                            "recommended": 0
+                        }
+                    """
                     for machine in data["data"]:
-                        self.machine_list.append(
-                            {
-                                "id": machine["id"],
+                        self.machine_data[machine["id"]] = {
                                 "name": machine["name"],
                                 "os": machine["os"],
                                 "difficulty": machine["difficultyText"],
                                 "user_owned": machine["authUserInUserOwns"],
                                 "root_owned": machine["authUserInRootOwns"],
                                 "points": machine["points"],
-                                "rating": machine["star"]
+                                "rating": machine["star"],
+                                "release": machine["release"],
+                                "active": machine["active"],
+                                "labels": machine["labels"],
+                                "feedbackForChart": machine["feedbackForChart"],
+                                "is_competitive": machine["is_competitive"],
+                                "user_owns_count": machine["user_owns_count"],
+                                "root_owns_count": machine["root_owns_count"],
                             }
-                        )
-
-                    return self.make_machine_list()
+                                                            
+                        
+                    print(f"Machine Data: {self.machine_data}")
+                    return self.machine_data
                 else:
                     return f"Error: {response.status_code} - {response.text}"
         except Exception as e:
@@ -114,20 +171,31 @@ class CurrentMachines(DataTable):
     #     self.post_message(DebugMessage({"Selected Machine": data}, DebugLevel.MEDIUM))
 
     def make_machine_list(self):
-        for machine in self.machine_list:
-            self.add_row(                
-                str(machine["id"]),
-                f"[{self.machine_difficulty_map[machine["difficulty"]]}]{machine["name"]}",
-                machine["os"],    
-                # machine["difficulty"],                            
-                "✅" if machine["user_owned"] else "❌",
-                "✅" if machine["root_owned"] else "❌",
-                str(machine["points"]),
-                str(machine["rating"]),
-                key=f"{machine['id']}")
-            
+        """ 
+        iterate over the machine list and add a row for each machine
 
-        # self.sort_reverse(
-        #     "ID",
-        #     key=lambda id: int(id)
-        # )
+        Data example:
+        {
+            "580": {
+                "name": "Bashed",
+                "os": "Linux",
+                "difficulty": "Easy",
+                "user_owned": false,
+                "root_owned": false,
+                "points": 20,
+                "rating": 3.4
+            }
+        }
+        """
+            
+        for id, data in self.machine_data.items():
+            self.add_row(                
+                str(id),
+                f"[{self.machine_difficulty_map[data['difficulty']]}]{data['name']}",
+                data['os'],    
+                "✅" if data['user_owned'] else "❌",
+                "✅" if data['root_owned'] else "❌",
+                str(data['points']),
+                str(data['rating']),
+                key=f"{id}")
+            

@@ -96,7 +96,7 @@ class HTBClient:
                 "up": None
             }
         }
-        self.machine_list = []
+        self.machine_data = {}
         self.machine_difficulty_map = {
             "Easy": "#90cd3f",
             "Medium": "#ffb83e",
@@ -256,18 +256,36 @@ class HTBClient:
                 if response.status_code == 200:
                     data = response.json()
 
+                    # for machine in data["data"]:
+                    #     self.machine_list.append(
+                    #         {
+                    #             "name": machine["name"],
+                    #             "os": machine["os"],
+                    #             "difficulty": machine["difficultyText"],
+                    #             "user_owned": machine["authUserInUserOwns"],
+                    #             "root_owned": machine["authUserInRootOwns"]
+                    #         }
+                    #     )
+
                     for machine in data["data"]:
-                        self.machine_list.append(
-                            {
+                        self.machine_data[machine["id"]] = {
                                 "name": machine["name"],
                                 "os": machine["os"],
                                 "difficulty": machine["difficultyText"],
                                 "user_owned": machine["authUserInUserOwns"],
-                                "root_owned": machine["authUserInRootOwns"]
+                                "root_owned": machine["authUserInRootOwns"],
+                                "points": machine["points"],
+                                "rating": machine["star"],
+                                "release": machine["release"],
+                                "active": machine["active"],
+                                "labels": machine["labels"],
+                                "feedbackForChart": machine["feedbackForChart"],
+                                "is_competitive": machine["is_competitive"],
+                                "user_owns_count": machine["user_owns_count"],
+                                "root_owns_count": machine["root_owns_count"],
                             }
-                        )
 
-                    return self.machine_list
+                    return self.machine_data
                 else:
                     print(f"Error: {response.status_code} - {response.text}")
         except Exception as e:
@@ -529,7 +547,7 @@ if __name__ == "__main__":
         # htb.get_profile()
 
         console = Console()
-        result = await htb.get_search_results("users", "sar1n")
+        result = await htb.get_machine_list()
         console.print(result)
 
     asyncio.run(main())

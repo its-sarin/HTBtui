@@ -11,6 +11,7 @@ from widgets.vpn_connection import VPNConnection
 from widgets.player_activity import PlayerActivity
 from widgets.active_machine import ActiveMachine
 from widgets.retired_machines import RetiredMachines
+from widgets.machine_control import MachineControl
 
 
 class HTBScreen(Screen):    
@@ -68,30 +69,45 @@ class HTBScreen(Screen):
             with Container(id="player_activity_container") as player_activity_container:
                 player_activity_container.border_title = "Player Activity"
                 yield PlayerActivity()
-        with Container(id="machines_container") as machines_container:
-            machines_container.border_title = "Machines"
-            with TabbedContent(id="machines_tabbed_content"):
-                with TabPane("Current Machines", id="current_machines_tab"):
-                    with Container(id="current_machines_container"):    
-                        yield CurrentMachines()
-                with TabPane("Retired Machines", id="retired_machines_tab"):
-                    with Container(id="retired_machines_container"):
-                        yield RetiredMachines()
+        with Container(id="machines"):
+            with Container(id="machines_container") as machines_container:
+                machines_container.border_title = "Machines"
+                with TabbedContent(id="machines_tabbed_content"):
+                    with TabPane("Current Machines", id="current_machines_tab"):
+                        with Container(id="current_machines_container"):    
+                            yield CurrentMachines()
+                    with TabPane("Retired Machines", id="retired_machines_tab"):
+                        with Container(id="retired_machines_container"):
+                            yield RetiredMachines()
+            with Container(id="machine_control_container"):
+                yield MachineControl()
+                yield Button("Spawn Machine")
 
 
         with Container(id="bottom_container"):
             yield VPNConnection()
             yield ActiveMachine()
 
-    def on_data_table_row_selected(self, row) -> None:
-        """
-        Event handler for when a data table row is selected.
+    def on_data_table_row_selected(self, event) -> None:
+        if event.control.id == "current_machines" or event.control.id == "retired_machines":
+            # self.query_one(ActiveMachine).update(f"Selected row: {event.row_key.value} from {event.data_table}")
+            # self.query_one(PlayerStats).update(f"{event.control.id}:{event.control.machine_data[int(event.row_key.value)]}")
 
-        Args:
-            row (dict): The row that was selected.
-        """
-        self.query_one(ActiveMachine).update(f"Selected row: {row.row_key.value} from {row.data_table}")
+            self.query_one(MachineControl).set_context(event.row_key.value, event.control.machine_data[int(event.row_key.value)])
+    # @on(PlayerActivity.RowSelected)
+    # def handle_activity_row_selected(self, event: PlayerActivity.RowSelected) -> None:
+    #     self.query_one(ActiveMachine).update(f"Selected row: {event.row_key.value} from {event.data_table}")
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.query_one(ContentSwitcher).current = event.button.id 
-        self.query_one("#machines_container").border_title = "Current Machines" if event.button.id == "current_machines" else "Retired Machines"
+    # def on_data_table_row_selected(self, row) -> None:
+    #     """
+    #     Event handler for when a data table row is selected.
+
+    #     Args:
+    #         row (dict): The row that was selected.
+    #     """
+    #     self.query_one(ActiveMachine).update(f"Selected row: {row.row_key.value} from {row.data_table}")
+    #     # if row.control.machine_data:
+    #         # self.query_one(ActiveMachine).update(f"{row.data_table}:{row.control.machine_data[int(row.row_key.value)]}")
+    #     self.query_one(PlayerStats).update(f"{row}:{row.control.machine_data[int(row.row_key.value)]}")
+
+    
