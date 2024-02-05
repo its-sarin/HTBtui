@@ -21,7 +21,7 @@ class CurrentMachines(DataTable):
             "Easy": "#90cd3f",
             "Medium": "#ffb83e",
             "Hard": "#fe0000",
-            "Insane": "#c7c8cb"
+            "Insane": "#ffccff"
         }
 
     def __init__(self) -> None:

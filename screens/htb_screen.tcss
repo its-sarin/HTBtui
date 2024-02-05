@@ -1,11 +1,13 @@
 $secondary: #9fef00;
 $background: #111927;
 $background-darken-1: #171717;
-$border: #5b72a4;
+$background-lighten-1: #1a2332;
+# $border: #5b72a4;
+$border: #3d5276;
 $color: #a4b1cd;
 
 Screen {
-    layout: vertical;
+    # layout: vertical;
 }
 
 Header {
@@ -14,9 +16,9 @@ Header {
     text-style: bold;
 }
 
-Horizontal#player_container {
+Container#player_container {
+    layout: horizontal;
     height: 40%;
-    color: $color;
     background: $background;
 }
 
@@ -26,44 +28,26 @@ Container#player_stats_container {
     background: $background;
     border: $border;
     overflow-y: auto;
-
 }
 
 Container#player_activity_container {
-    width: 65%;
+    # width: auto;
     height: 100%;
     background: $background;
+    border: $border;
 }
 
 PlayerStats {
     width: 100%;
     min-height: 100%;
     height: auto;
+    color: $color;
 }
 
 PlayerActivity {
     width: 100%;
-    height: 100%;    
-}
-
-#buttons {
-    height: 2;
-    background: $background;
-}
-
-#buttons > Button {
-    min-width:1;
-    height: 1;
-    max-height: 1;
-    border: none;
-    color: $color;
-    margin: 0 1;
-}
-
-#buttons > Button:hover,
-#buttons > Button:focus {
-    color: auto;
-    background: $secondary
+    height: 100%;
+    color: $color;    
 }
 
 Container#machines_container {
@@ -78,19 +62,6 @@ ContentSwitcher#machines_switcher {
     height: 100%;
 }
 
-Container#current_machines {
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    max-height: 100%;
-}
-
-Container#retired_machines {
-    width: 100%;
-    min-height: 100%;
-    max-height: 100%;
-}
-
 CurrentMachines, RetiredMachines {
     min-height: 100%;
     max-height: 100%;
@@ -99,7 +70,7 @@ CurrentMachines, RetiredMachines {
 CurrentMachines > .datatable--header,
 RetiredMachines > .datatable--header,
 PlayerActivity > .datatable--header {
-    background: #1a2332;
+    background: $background-lighten-1;
 }
 
 CurrentMachines > .datatable--header-hover,
@@ -108,10 +79,11 @@ PlayerActivity > .datatable--header-hover {
     background: $secondary 60%;
  }
 
- PlayerActivity, #player_stats_container {
-    background: $background;
+ PlayerActivity,
+ CurrentMachines,
+ RetiredMachines,
+ #player_stats_container {
     color: $color;
-    border: $border;
     scrollbar-background: #111;
     scrollbar-background-active: transparent;
     scrollbar-background-hover: transparent;
@@ -121,21 +93,8 @@ PlayerActivity > .datatable--header-hover {
     scrollbar-size: 0 1;
 }
 
-CurrentMachines, RetiredMachines {
-    background: $background;
-    color: $color;
-    # border: $border;
-    scrollbar-background: #111;
-    scrollbar-background-active: transparent;
-    scrollbar-background-hover: transparent;
-    scrollbar-color: $secondary 50%;
-    scrollbar-color-active: $secondary;
-    scrollbar-color-hover: $secondary 70%;
-    scrollbar-size-vertical: 1;
-}
-
-Horizontal#bottom_container {
-    height: 2;
+#bottom_container {
+    height: 1;
     dock: bottom;
     background: #000;
 }
@@ -154,42 +113,32 @@ ActiveMachine:hover {
 }
 
 VPNConnection {
+    width: 33%;
     dock: left;
 }
 
 ActiveMachine {
+    width: 33%;
     dock: right;
 }
 
-Footer {
-    background: $background-darken-1;
-    color: $color;
-}
-
-Footer > .footer--highlight {
-    background: transparent;
-    color: auto;
-}
-
-Footer > .footer--highlight-key {
-    background: $secondary;
-    text-style: bold;
-    color: auto;
-}
-
-Footer > .footer--key {
-    text-style: bold;
-    background: transparent;
-}
-
-# #ping {
-#     dock: bottom;
-#     margin: 1 2;
-#     layer: 1;
-#     width: 6;
+# Footer {
+#     background: $background-darken-1;
+#     color: $color;
 # }
 
-# .box {
-#     height: 100%;    
-#     content-align: center middle;
+# Footer > .footer--highlight {
+#     background: transparent;
+#     color: auto;
+# }
+
+# Footer > .footer--highlight-key {
+#     background: $secondary;
+#     text-style: bold;
+#     color: auto;
+# }
+
+# Footer > .footer--key {
+#     text-style: bold;
+#     background: transparent;
 # }
