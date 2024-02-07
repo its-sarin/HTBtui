@@ -1,6 +1,6 @@
 from textual import on
 from textual.screen import Screen
-from textual.widgets import Header, Footer, ContentSwitcher, Button, TabbedContent, TabPane
+from textual.widgets import Header, Footer, RichLog, TabbedContent, TabPane
 from textual.containers import Container, Horizontal
 from textual.app import ComposeResult
 
@@ -11,7 +11,12 @@ from widgets.vpn_connection import VPNConnection
 from widgets.player_activity import PlayerActivity
 from widgets.active_machine import ActiveMachine
 from widgets.retired_machines import RetiredMachines
-from widgets.machine_control import MachineControl
+from widgets.machine_control import MachineDetails
+from widgets.output_log import OutputLog
+
+from messages.debug_message import DebugMessage
+from enums.debug_level import DebugLevel 
+from messages.data_received import DataReceived
 
 
 class HTBScreen(Screen):    
@@ -49,6 +54,7 @@ class HTBScreen(Screen):
         super().__init__()
         self.refresh_active_machine_ping = None
         self.has_active_machine = False
+        self.active_machine_data = {}
         self.title = ":: HTBtui ::"
 
 
@@ -79,35 +85,39 @@ class HTBScreen(Screen):
                     with TabPane("Retired Machines", id="retired_machines_tab"):
                         with Container(id="retired_machines_container"):
                             yield RetiredMachines()
-            with Container(id="machine_control_container"):
-                yield MachineControl()
-                yield Button("Spawn Machine")
-
-
+            yield MachineDetails(id="machine_control")
+        yield OutputLog(id="log")
         with Container(id="bottom_container"):
             yield VPNConnection()
-            yield ActiveMachine()
-
-    def on_data_table_row_selected(self, event) -> None:
-        if event.control.id == "current_machines" or event.control.id == "retired_machines":
-            # self.query_one(ActiveMachine).update(f"Selected row: {event.row_key.value} from {event.data_table}")
-            # self.query_one(PlayerStats).update(f"{event.control.id}:{event.control.machine_data[int(event.row_key.value)]}")
-
-            self.query_one(MachineControl).set_context(event.row_key.value, event.control.machine_data[int(event.row_key.value)])
-    # @on(PlayerActivity.RowSelected)
-    # def handle_activity_row_selected(self, event: PlayerActivity.RowSelected) -> None:
-    #     self.query_one(ActiveMachine).update(f"Selected row: {event.row_key.value} from {event.data_table}")
-
-    # def on_data_table_row_selected(self, row) -> None:
-    #     """
-    #     Event handler for when a data table row is selected.
-
-    #     Args:
-    #         row (dict): The row that was selected.
-    #     """
-    #     self.query_one(ActiveMachine).update(f"Selected row: {row.row_key.value} from {row.data_table}")
-    #     # if row.control.machine_data:
-    #         # self.query_one(ActiveMachine).update(f"{row.data_table}:{row.control.machine_data[int(row.row_key.value)]}")
-    #     self.query_one(PlayerStats).update(f"{row}:{row.control.machine_data[int(row.row_key.value)]}")
-
+            yield ActiveMachine(id="active_machine")
     
+    def on_data_table_row_selected(self, event) -> None:
+        """
+        Handles the event when a row is selected in the data table.
+
+        Args:
+            event: The event object containing information about the selected row.
+
+        Returns:
+            None
+        """
+        if event.control.id == "current_machines" or event.control.id == "retired_machines":
+            self.query_one(MachineDetails).set_context(event.row_key.value, event.control.machine_data[int(event.row_key.value)])
+    
+    @on(DataReceived)
+    def handle_data_received(self, message: DataReceived) -> None:
+        """
+        Handles the data received event.
+
+        Args:
+            message (DataReceived): The data received message.
+
+        Returns:
+            None
+        """
+        machine_details = self.query_one(MachineDetails)
+        machine_details.active_machine_data = message.data
+        self.post_message(DebugMessage({"Active Machine Data": message.data}, DebugLevel.LOW))
+        if message.key == "active_machine":
+            id = message.data["id"]
+            machine_details.set_context(id, message.data)

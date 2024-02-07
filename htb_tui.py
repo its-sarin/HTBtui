@@ -7,6 +7,8 @@ from screens.htb_screen import HTBScreen
 from screens.console_modal import ConsoleModal
 
 from messages.debug_message import DebugMessage
+from messages.data_received import DataReceived
+from messages.log_message import LogMessage
 from enums.debug_level import DebugLevel
 
 
@@ -19,9 +21,12 @@ class HTBtui(App):
         "console_modal": ConsoleModal()
     }
 
-    debug_level = DebugLevel.MEDIUM
 
-    message_queue = []
+    def __init__(self) -> None:
+        super().__init__()
+        self.message_queue = []
+        self.context_data = {}
+        self.debug_level = DebugLevel.LOW
     
     def on_ready(self) -> None:
         """
@@ -41,21 +46,18 @@ class HTBtui(App):
         # log = self.query_one(RichLog)
         # log.write("Console requested")
         self.push_screen("console_modal")
-        
-    # @on(DebugMessage)
-    # def log_debug_messages(self, message: DebugMessage) -> None:
-    #     """
-    #     Logs debug messages to the console.
+    
+    @on(DataReceived)
+    def add_data_to_context(self, message: DataReceived) -> None:
+        """
+        Adds data to the context.
 
-    #     Args:
-    #         message (DebugMessage): The debug message to log.
-    #     """
-    #     if message.debug_level.value <= self.debug_level.value:
-    #         try:
-    #             log = self.query_one(RichLog)
-    #             log.write(message.data)
-    #         except Exception as e:
-    #             print(f"Error: {e}")
+        Args:
+            message (DataReceived): The data to add to the context.
+        """
+        self.context_data[message.key] = message.data
+        # self.query_one(RichLog).write(f"Data received: {message.key}")
+        # self.query_one(RichLog).write(self.context_data[message.key])
 
     @on(DebugMessage)
     def log_debug_messages(self, message: DebugMessage) -> None:
@@ -66,14 +68,19 @@ class HTBtui(App):
             message (DebugMessage): The debug message to log.
         """
         if message.debug_level.value <= self.debug_level.value:
-            try:
-                log = self.query_one(RichLog)
-                log.write(message.data)
-            except NoMatches:
-                self.add_message_to_queue(message.data)
-                
-    def add_message_to_queue(self, message):
-        self.message_queue.append(message)
+            log = self.query_one(RichLog)
+            log.write(message.debug_data)
+
+    @on(LogMessage)
+    def log_messages(self, message: LogMessage) -> None:
+        """
+        Logs messages to the console.
+
+        Args:
+            message (LogMessage): The message to log.
+        """
+        log = self.query_one(RichLog)
+        log.write(message.message)
 
 
 if __name__ == "__main__":

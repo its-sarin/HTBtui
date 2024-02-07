@@ -5,7 +5,7 @@ $border: #5b72a4;
 $color: #a4b1cd;
 
 ConsoleModal {
-    layout: horizontal;
+    layout: vertical;
     align: center middle;
 }
 

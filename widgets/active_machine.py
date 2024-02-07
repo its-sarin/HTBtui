@@ -6,6 +6,7 @@ from rich import box
 from textual.widgets import Static
 
 from messages.debug_message import DebugMessage
+from messages.data_received import DataReceived
 from enums.debug_level import DebugLevel
 from utilities.api_token import APIToken
 
@@ -17,16 +18,16 @@ class ActiveMachine(Static):
     endpoint = {
         "active_machine": "/api/v4/machine/active",
         "active_season_machine": "/api/v4/season/machine/active",
-        "active_machine_info": "/api/v4/machine/info/",
+        "active_machine_profile": "/api/v4/machine/profile/",
     }
     headers = {
             "Authorization": f"Bearer {APIToken(token_name).get_token()}",
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }
-    
-    def __init__(self) -> None:
-        super().__init__()                
+    #init with args and kwargs
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)                
         self.loading = True
         self.refresh_interval = 10
         self.active_machine_data = {
@@ -38,6 +39,13 @@ class ActiveMachine(Static):
             "difficulty": None,
             "user_owned": None,
             "root_owned": None,
+            "points": None,
+            "rating": None,
+            "release": None,
+            "active": None,
+            "feedbackForChart": None,
+            "user_owns_count": None,
+            "root_owns_count": None,
             'playInfo': {
                 'isSpawned': None,
                 'isSpawning': None,
@@ -46,6 +54,8 @@ class ActiveMachine(Static):
                 'expires_at': None
             }
         }
+
+
 
     async def on_mount(self) -> None:
         """Mount the widget."""
@@ -60,9 +70,10 @@ class ActiveMachine(Static):
         Updates the active machine widget with the latest active machine data from self.htb.
         """
         try:
-            table = await self.get_active_machine()
+            data = await self.get_active_machine()            
             self.loading = False
-            self.update(table)
+            self.post_message(DataReceived(data, "active_machine"))
+            self.update(self.make_active_machine())
         except Exception as e:
             self.update(f"Error: {e}")
 
@@ -85,13 +96,21 @@ class ActiveMachine(Static):
                         self.active_machine_data["difficulty"] = None
                         self.active_machine_data["user_owned"] = False
                         self.active_machine_data["root_owned"] = False
+                        self.active_machine_data["points"] = None
+                        self.active_machine_data["rating"] = None
+                        self.active_machine_data["release"] = None
+                        self.active_machine_data["active"] = False
+                        self.active_machine_data["feedbackForChart"] = None
+                        self.active_machine_data["is_competitive"] = False
+                        self.active_machine_data["user_owns_count"] = None
+                        self.active_machine_data["root_owns_count"] = None
                         self.active_machine_data["playInfo"]["isSpawned"] = False
                         self.active_machine_data["playInfo"]["isSpawning"] = False
                         self.active_machine_data["playInfo"]["isActive"] = False
                         self.active_machine_data["playInfo"]["active_player_count"] = 0
                         self.active_machine_data["playInfo"]["expires_at"] = None
 
-                        return self.make_active_machine()
+                        return self.active_machine_data
 
                     # assign data to self.active_machine_data
                     self.active_machine_data["status"] = "Active"
@@ -101,7 +120,7 @@ class ActiveMachine(Static):
                     self.active_machine_data["name"] = data["info"]["name"]
 
                     # get additional machine data
-                    response = await client.get(self.base_url + self.endpoint["active_machine_info"] + str(self.active_machine_data["id"]), headers=self.headers)
+                    response = await client.get(self.base_url + self.endpoint["active_machine_profile"] + str(self.active_machine_data["id"]), headers=self.headers)
                     if response.status_code == 200:
                         data = response.json()
 
@@ -113,13 +132,20 @@ class ActiveMachine(Static):
                         self.active_machine_data["difficulty"] = data["info"]["difficultyText"]
                         self.active_machine_data["user_owned"] = data["info"]["authUserInUserOwns"]
                         self.active_machine_data["root_owned"] = data["info"]["authUserInRootOwns"]
+                        self.active_machine_data["points"] = data["info"]["points"]
+                        self.active_machine_data["rating"] = data["info"]["stars"]
+                        self.active_machine_data["release"] = data["info"]["release"]
+                        self.active_machine_data["active"] = data["info"]["active"]
+                        self.active_machine_data["feedbackForChart"] = data["info"]["feedbackForChart"]
+                        self.active_machine_data["user_owns_count"] = data["info"]["user_owns_count"]
+                        self.active_machine_data["root_owns_count"] = data["info"]["root_owns_count"]
                         self.active_machine_data["playInfo"]["isSpawned"] = data["info"]["playInfo"]["isSpawned"]
                         self.active_machine_data["playInfo"]["isSpawning"] = data["info"]["playInfo"]["isSpawning"]
                         self.active_machine_data["playInfo"]["isActive"] = data["info"]["playInfo"]["isActive"]
                         self.active_machine_data["playInfo"]["active_player_count"] = data["info"]["playInfo"]["active_player_count"]
-                        self.active_machine_data["playInfo"]["expires_at"] = data["info"]["playInfo"]["expires_at"]
+                        self.active_machine_data["playInfo"]["expires_at"] = data["info"]["playInfo"]["expires_at"]                        
 
-                        return self.make_active_machine()
+                        return self.active_machine_data
                 else:
                     return f"Error: {response.status_code} - {response.text}"
         except Exception as e:

@@ -11,6 +11,7 @@ from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 
 
+
 class PlayerStats(Static):
     """Static widget that shows the player stats."""
 
@@ -203,8 +204,8 @@ class PlayerStats(Static):
         table.add_column(style="", ratio=1)
 
         # user stats
-        table.add_row("Name", f"[#9fef00]{self.user_data["name"]}")
-        table.add_row("User ID", str(self.user_data["id"]))
+        table.add_row("Name", f"[#37ff0f]{self.user_data["name"]}")
+        table.add_row("ID", str(self.user_data["id"]))
         table.add_row("Rank", self.id_to_rank(self.user_data["rank"]))
         table.add_row("Progress", str(self.user_data["rank_progress"])+ "%")
         table.add_row("Ranking", str(self.user_data["ranking"]))        

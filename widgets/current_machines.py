@@ -48,6 +48,10 @@ class CurrentMachines(DataTable):
         """Mount the widget."""
         self.run_worker(self.update_machine_list())
 
+    async def reload_machines(self) -> None:
+        """Reload the machines."""
+        self.loading = True
+        self.run_worker(self.update_machine_list())
 
     async def update_machine_list(self) -> None:
         """
@@ -137,6 +141,7 @@ class CurrentMachines(DataTable):
                     for machine in data["data"]:
                         self.machine_data[machine["id"]] = {
                                 "name": machine["name"],
+                                "id": machine["id"],
                                 "os": machine["os"],
                                 "difficulty": machine["difficultyText"],
                                 "user_owned": machine["authUserInUserOwns"],
@@ -197,5 +202,5 @@ class CurrentMachines(DataTable):
                 "✅" if data['root_owned'] else "❌",
                 str(data['points']),
                 str(data['rating']),
-                key=f"{id}")
+                key=id)
             
