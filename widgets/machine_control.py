@@ -104,6 +104,12 @@ class MachineDetails(Static):
         """
         return self.selected_machine_data
     
+    def has_active_machine(self) -> bool:
+        """
+        Returns True if there is an active machine, otherwise False.
+        """
+        return self.active_machine_data["id"] is not None
+
     def enable_buttons(self) -> None:
         """
         Enables the machine control buttons.

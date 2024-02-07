@@ -102,7 +102,9 @@ class HTBScreen(Screen):
             None
         """
         if event.control.id == "current_machines" or event.control.id == "retired_machines":
-            self.query_one(MachineDetails).set_context(event.row_key.value, event.control.machine_data[int(event.row_key.value)])
+            machine_details = self.query_one(MachineDetails)
+            if not machine_details.has_active_machine():
+                machine_details.set_context(event.row_key.value, event.control.machine_data[int(event.row_key.value)])
     
     @on(DataReceived)
     def handle_data_received(self, message: DataReceived) -> None:
@@ -118,6 +120,6 @@ class HTBScreen(Screen):
         machine_details = self.query_one(MachineDetails)
         machine_details.active_machine_data = message.data
         self.post_message(DebugMessage({"Active Machine Data": message.data}, DebugLevel.LOW))
-        if message.key == "active_machine":
+        if message.key == "active_machine" and machine_details.has_active_machine():
             id = message.data["id"]
             machine_details.set_context(id, message.data)
