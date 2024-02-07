@@ -180,7 +180,7 @@ PlayerActivity > .datatable--header-hover {
 }
 
 RichLog#log {
-    height: 3%;
+    display: none;
     background: #111;
     border-top: tall #000;
     scrollbar-background-active: transparent;
@@ -191,6 +191,7 @@ RichLog#log {
     scrollbar-size: 0 1;
 
     &.expanded {
+        display: block;
         height: 35%;
     }
 }

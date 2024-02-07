@@ -108,7 +108,7 @@ class MachineDetails(Static):
         """
         Returns True if there is an active machine, otherwise False.
         """
-        return self.active_machine_data["id"] is not None
+        return self.active_machine_data and self.active_machine_data["id"] is not None
 
     def enable_buttons(self) -> None:
         """

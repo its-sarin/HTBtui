@@ -1,4 +1,5 @@
 import httpx
+import pyperclip
 
 from rich.table import Table
 from rich import box
@@ -48,7 +49,18 @@ class VPNConnection(Static):
         self.loading = True
 
         self.run_worker(self.update_connection())
-        self.refresh_connection = self.set_interval(self.refresh_interval, self.update_connection)        
+        self.refresh_connection = self.set_interval(self.refresh_interval, self.update_connection)   
+
+    def _on_click(self) -> None:
+        """
+        Event handler for when the widget is clicked.
+        """
+        try:
+            pyperclip.copy(self.connection_data["connection"]["ip4"])
+            self.notify("IP copied to clipboard")
+            self.post_message(DebugMessage({"Copied IP": self.connection_data["connection"]["ip4"]}, DebugLevel.LOW))
+        except Exception as e:
+            self.post_message(DebugMessage({"Error": e}, DebugLevel.LOW))
 
     async def update_connection(self) -> None:
         """

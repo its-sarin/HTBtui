@@ -18,11 +18,11 @@ class OutputLog(RichLog):
         """
         super().__init__(*args, **kwargs)
 
-    def _on_click(self) -> None:
-        """
-        Event handler for when the widget is clicked.
-        """
-        self.toggle_class("expanded")
+    # def _on_click(self) -> None:
+    #     """
+    #     Event handler for when the widget is clicked.
+    #     """
+    #     self.toggle_class("expanded")
 
     @on(DebugMessage)
     def log_debug_messages(self, message: DebugMessage) -> None:

@@ -1,4 +1,5 @@
 import httpx
+import pyperclip
 
 from rich.table import Table
 from rich import box
@@ -64,6 +65,16 @@ class ActiveMachine(Static):
         self.run_worker(self.update_active_machine())
         self.refresh_active_machine = self.set_interval(self.refresh_interval, self.update_active_machine)
 
+    def _on_click(self) -> None:
+        """
+        Event handler for when the widget is clicked.
+        """
+        try:
+            pyperclip.copy(self.active_machine_data["ip"])
+            self.notify("IP copied to clipboard")
+            self.post_message(DebugMessage({"Copied IP": self.active_machine_data["ip"]}, DebugLevel.LOW))
+        except Exception as e:
+            self.post_message(DebugMessage({"Error": e}, DebugLevel.LOW))
 
     async def update_active_machine(self) -> None:
         """

@@ -45,7 +45,8 @@ class HTBtui(App):
         """
         # log = self.query_one(RichLog)
         # log.write("Console requested")
-        self.push_screen("console_modal")
+        # self.push_screen("console_modal")
+        self.query_one("#log").toggle_class("expanded")
     
     @on(DataReceived)
     def add_data_to_context(self, message: DataReceived) -> None:
