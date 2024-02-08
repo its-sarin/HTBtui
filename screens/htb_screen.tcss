@@ -74,10 +74,10 @@ PlayerActivity {
     width: 30%;
     max-width: 30%;
     height: 100%;
-    # layout: vertical;
     background: $background;
     border: $border;
     border-title-color: $border-title-color;
+    color: $color;
 
     #machine_details {
         padding: 1 1 0 1;
