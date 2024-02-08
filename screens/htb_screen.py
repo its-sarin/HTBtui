@@ -118,8 +118,6 @@ class HTBScreen(Screen):
             None
         """
         machine_details = self.query_one(MachineDetails)
-        machine_details.active_machine_data = message.data
-        self.post_message(DebugMessage({"Active Machine Data": message.data}, DebugLevel.LOW))
-        if message.key == "active_machine" and machine_details.has_active_machine():
-            id = message.data["id"]
-            machine_details.set_context(id, message.data)
+        if message.key == "active_machine":
+            machine_details.active_machine_data = message.data if message.data["id"] else {}
+        self.post_message(DebugMessage({"[!] Active Machine Data": message.data}, DebugLevel.LOW))

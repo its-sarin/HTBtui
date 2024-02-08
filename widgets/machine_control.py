@@ -2,7 +2,7 @@ import httpx
 from datetime import datetime
 from textual import on
 from textual.app import ComposeResult
-from textual.widgets import Static, Button
+from textual.widgets import Static, Button, Sparkline, Label, Rule
 from textual.containers import Container
 from textual.reactive import Reactive
 
@@ -41,12 +41,40 @@ class MachineDetails(Static):
         }
     
     active_machine_data = Reactive({})
+
+    """
+    {
+        "id": None,
+        "status": None, 
+        "name": None,
+        "os": None,
+        "ip": None,
+        "difficulty": None,
+        "user_owned": None,
+        "root_owned": None,
+        "points": None,
+        "rating": None,
+        "release": None,
+        "active": None,
+        "feedbackForChart": None,
+        "user_owns_count": None,
+        "root_owns_count": None,
+        'playInfo': {
+            'isSpawned': None,
+            'isSpawning': None,
+            'isActive': None,
+            'active_player_count': None,
+            'expires_at': None
+        }
+    }
+    """
     
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)        
         self.selected_machine_id: int = 0
         self.selected_machine_data = {}  
-        self.border_title = "Machine Details"        
+        self.border_title = "Machine Info" 
+        
         # self.loading = True
 
     def compose(self) -> ComposeResult:
@@ -54,6 +82,14 @@ class MachineDetails(Static):
         Composes the layout of the application.
         """
         yield Static(id="machine_details")
+        with Container(id="machine_feedback_container"):
+            yield Rule()        
+            with Container(id="feedback_container"):
+                yield Sparkline(id="feedback_sparkline_easy")
+                yield Sparkline(id="feedback_sparkline_medium")
+                yield Sparkline(id="feedback_sparkline_hard")
+            yield Label("User Rated Difficulty")
+            yield Rule()
         with Container(id="machine_control_buttons"):
             yield Button("Spawn Machine", id="spawn_machine_button")
             yield Button("Stop Machine", id="stop_machine_button")
@@ -66,37 +102,19 @@ class MachineDetails(Static):
         self.selected_machine_id = machine_id
         self.selected_machine_data = machine_data
         self.border_title = f"{self.selected_machine_data['name']} :: {self.selected_machine_id}"
-        self.styles.border_title_color = "#9fef00"
-        self.handle_set_context()
-
-    def handle_set_context(self) -> None:
-        
-        self.enable_buttons()
-
-        if self.active_machine_data["id"] is not None:
-            if int(self.active_machine_data["id"]) == self.selected_machine_id:
-                self.add_class("active")                
-                self.remove_class("active_but_inactive")
-                self.remove_class("inactive")
-            else:
-                self.remove_class("active")
-                self.add_class("active_but_inactive")
-                self.remove_class("inactive")
-        else:
-            self.remove_class("active")
-            self.remove_class("active_but_inactive")
-            self.add_class("inactive")   
-        
-        self.query_one(Static).update(self.make_machine_details())
-        
+        self.handle_display_buttons()
+        self.query_one("#machine_details").update(self.make_machine_details())    
 
     def clear_context(self) -> None:
         """
         Clears the selected machine context.
         """
+        self.app.post_message(LogMessage(f"[-] Clearing machine context"))
         self.selected_machine_id = None
         self.selected_machine_data = {}
-        self.refresh()
+        self.border_title = "Machine Info"
+        self.handle_display_buttons()
+        self.query_one("#machine_details").update("")        
 
     def get_context(self) -> dict:
         """
@@ -108,7 +126,18 @@ class MachineDetails(Static):
         """
         Returns True if there is an active machine, otherwise False.
         """
-        return self.active_machine_data and self.active_machine_data["id"] is not None
+        return self.active_machine_data
+    
+    def watch_active_machine_data(self, old_value, new_value) -> None:
+        """
+        Watches the active machine data for changes.
+        """
+        self.app.post_message(LogMessage(f"[+] Active machine data changed from: {old_value} to: {new_value}"))
+        if self.has_active_machine():
+            id = new_value["id"]
+            self.set_context(id, new_value)
+        else:
+            self.clear_context()
 
     def enable_buttons(self) -> None:
         """
@@ -125,6 +154,34 @@ class MachineDetails(Static):
         buttons = self.query(Button)
         for button in buttons:
             button.disabled = True
+
+    def handle_display_buttons(self) -> None:
+        
+        self.enable_buttons()
+
+        if self.has_active_machine():
+            self.add_class("active")
+            self.remove_class("inactive")
+        elif self.selected_machine_id is not None:
+            self.remove_class("active")
+            self.add_class("inactive")
+        else:
+            self.remove_class("active")
+            self.remove_class("inactive")
+
+    def make_feedback_sparkline(self) -> None:
+        """
+        Makes the feedback sparkline.
+        """
+        feedback = self.selected_machine_data["feedbackForChart"]
+        feedback_data = []
+        for key, value in feedback.items():
+            feedback_data.append(value)
+        
+        self.query_one("#feedback_sparkline_easy").data = feedback_data[slice(3)]
+        self.query_one("#feedback_sparkline_medium").data = feedback_data[slice(3, 6)]
+        self.query_one("#feedback_sparkline_hard").data = feedback_data[slice(7, 10)]
+
 
     def make_machine_details(self) -> None:
         """
@@ -154,7 +211,6 @@ class MachineDetails(Static):
         "root_owns_count": machine["root_owns_count"],
         """
 
-        # table.add_row(f"[#9fef00]{self.selected_machine_data["name"]}[/#9fef00] :: [#9fef00]{self.selected_machine_id}")
         table.add_row(
             self.selected_machine_data["os"], 
             f"[{self.machine_difficulty_map[self.selected_machine_data['difficulty']]}]{self.selected_machine_data["difficulty"]}"
@@ -183,22 +239,9 @@ class MachineDetails(Static):
         release_date = datetime.strptime(self.selected_machine_data["release"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%B %d, %Y")
         table.add_row("Release", release_date)
 
+        self.make_feedback_sparkline()
+
         return table
-    
-    @on(DataReceived)
-    def handle_data_received(self, message: DataReceived) -> None:
-        """
-        Handles the data received event.
-
-        Args:
-            message (DataReceived): The data received message.
-
-        Returns:
-            None
-        """
-        self.app.post_message(LogMessage(f"[+] Data received: {message.key}"))
-        self.active_machine_data = message.data
-        self.set_context(self.active_machine_data["id"], self.active_machine_data)
 
     @on(Button.Pressed, selector="#spawn_machine_button")
     async def spawn_button_pressed(self) -> None:
@@ -210,7 +253,6 @@ class MachineDetails(Static):
         started = await self.start_machine(id)
         if started:
             self.app.post_message(LogMessage(f"[+] Machine started"))
-        self.enable_buttons()
 
     async def start_machine(self, machine_id: int) -> bool:
         """
@@ -244,7 +286,6 @@ class MachineDetails(Static):
         stopped = await self.stop_machine()
         if stopped:
             self.app.post_message(LogMessage(f"[+] Machine stopped"))
-        self.enable_buttons()          
 
     async def stop_machine(self) -> bool:
         """
@@ -281,7 +322,6 @@ class MachineDetails(Static):
         data = await self.reset_machine()
         if data:
             self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
-        self.enable_buttons()
         self.app.post_message(LogMessage(f"[+] Machine reset"))
 
     async def reset_machine(self) -> None:

@@ -4,7 +4,11 @@ $background-darken-1: #171717;
 $background-lighten-1: #1a2332;
 # $border: #5b72a4;
 $border: #3d5276;
+$border-title-color: #5775a8
 $color: #a4b1cd;
+$color-easy: #90cd3f;
+$color-medium: #ffb83e;
+$color-hard: #fe0000;
 
 Screen {
     # layout: vertical;
@@ -27,6 +31,7 @@ Container#player_stats_container {
     height: 100%;
     background: $background;
     border: $border;
+    border-title-color: $border-title-color;
     overflow-y: auto;
 }
 
@@ -35,6 +40,7 @@ Container#player_activity_container {
     height: 100%;
     background: $background;
     border: $border;
+    border-title-color: $border-title-color;
 }
 
 PlayerStats {
@@ -61,6 +67,7 @@ PlayerActivity {
     width: 70%;
     background: $background;
     border: $border;
+    border-title-color: $border-title-color;
 }
 
 #machine_control {
@@ -70,6 +77,69 @@ PlayerActivity {
     # layout: vertical;
     background: $background;
     border: $border;
+    border-title-color: $border-title-color;
+
+    #machine_details {
+        padding: 1 1 0 1;
+    }
+
+    #machine_feedback_container {
+        display: none;
+
+        Rule {
+            width: 100%;
+            padding: 0 1;   
+            color: $border;
+        }
+    
+        Label {
+            color: $border-title-color;
+            width: 100%;
+            text-align: center;
+            margin-top: 1;
+        }
+    
+        #feedback_container {
+            layout: horizontal;
+            height: 10%;
+            width: 100%;
+            margin: 1 2 0 2;
+    
+            #feedback_sparkline_easy {
+                width: 30%;
+                .sparkline--min-color {
+                    color: $color-easy ;
+                }
+        
+                .sparkline--max-color {
+                    color: $color-easy;
+                }
+            }
+    
+            #feedback_sparkline_medium {
+                width: 40%;
+                .sparkline--min-color {
+                    color: $color-medium;
+                }
+        
+                .sparkline--max-color {
+                    color: $color-medium;
+                }
+            }
+    
+            #feedback_sparkline_hard {
+                width: 30%;
+                .sparkline--min-color {
+                    color: $color-hard;
+                }
+        
+                .sparkline--max-color {
+                    color: $color-hard;
+                }
+            }
+        } 
+    }
+    
 
     #machine_control_buttons {
         height: auto;
@@ -85,6 +155,12 @@ PlayerActivity {
 }
 
 #machine_control.active {
+    border-title-color: $secondary;
+
+    #machine_feedback_container {
+        display: block;
+    }
+
     #machine_control_buttons {
         Button#spawn_machine_button {
             display: none;
@@ -107,6 +183,12 @@ PlayerActivity {
 }
 
 #machine_control.inactive {
+    border-title-color: $border-title-color;
+
+    #machine_feedback_container {
+        display: block;
+    }
+
     #machine_control_buttons {
         Button#spawn_machine_button {
             display: block;
