@@ -2,9 +2,9 @@ import httpx
 
 from textual.widgets import DataTable
 
-from utilities.api_token import APIToken
-from enums.debug_level import DebugLevel
-from messages.debug_message import DebugMessage
+from utilities import APIToken
+from enums import DebugLevel
+from messages import DebugMessage
 
 class CurrentMachines(DataTable):
     """DataTable widget that shows the current machines."""
@@ -163,16 +163,6 @@ class CurrentMachines(DataTable):
                     return f"Error: {response.status_code} - {response.text}"
         except Exception as e:
             return f"Error: {e}"
-        
-    # def on_data_table_row_selected(self, data_table: DataTable, cursor_row, row_key) -> None:
-    #     """
-    #     Event handler for when a row in the data table is selected.
-
-    #     Args:
-    #         row (int): The index of the selected row.
-    #         data (dict): The data associated with the selected row.
-    #     """
-    #     self.post_message(DebugMessage({"Selected Machine": data}, DebugLevel.MEDIUM))
 
     def make_machine_list(self):
         """ 

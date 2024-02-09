@@ -8,10 +8,9 @@ from textual.reactive import Reactive
 
 from rich.table import Table
 
-from utilities.api_token import APIToken
-from enums.debug_level import DebugLevel
-from messages.debug_message import DebugMessage
-from messages.log_message import LogMessage
+from utilities import APIToken
+from enums import DebugLevel
+from messages import DebugMessage, LogMessage
 
 
 class MachineDetails(Static):
@@ -229,7 +228,6 @@ class MachineDetails(Static):
         # )
 
         # table.add_row("Labels", self.selected_data["labels"])
-        # table.add_row("Feedback", self.selected_data["feedbackForChart"])
             
         table.add_row("User Owns", str(self.selected_machine_data["user_owns_count"]))
         table.add_row("Root Owns", str(self.selected_machine_data["root_owns_count"]))
@@ -269,7 +267,6 @@ class MachineDetails(Static):
             self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
 
             if "deployed" in data["message"]:
-                # self.active_machine_id = machine_id
                 self.app.post_message(LogMessage(f"[+] Active machine ID: {machine_id}"))
                 
                 return True

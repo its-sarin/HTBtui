@@ -3,10 +3,9 @@ import pyperclip
 
 from textual.widgets import Static
 
-from messages.debug_message import DebugMessage
-from messages.data_received import DataReceived
-from enums.debug_level import DebugLevel
-from utilities.api_token import APIToken
+from messages import DebugMessage, DataReceived
+from enums import DebugLevel
+from utilities import APIToken
 
 
 class ActiveMachine(Static):
@@ -52,8 +51,6 @@ class ActiveMachine(Static):
                 'expires_at': None
             }
         }
-
-
 
     async def on_mount(self) -> None:
         """Mount the widget."""
@@ -173,45 +170,6 @@ class ActiveMachine(Static):
         
         return f"{self.active_machine_data["name"]} :: [#9fef00]{self.active_machine_data["ip"]}"
     
-
-        # table = Table(
-        #     box=box.SIMPLE,
-        #     show_header=False,
-        #     show_footer=False,
-        #     pad_edge=False,
-        #     expand=True
-        # )
-
-        # table.add_column()
-        # table.add_column()
-        # table.add_column(justify="left")
-
-        # table.add_row(
-        #     self.active_machine_data["name"],
-        #     f"[#9fef00]{self.active_machine_data["ip"]}",
-        #     f"# Players {self.active_machine_data["playInfo"]["active_player_count"]}"
-        #     )
-        # table.add_row(
-        #     self.active_machine_data["os"],
-        #     self.active_machine_data["difficulty"],
-           
-        #     )
-        # table.add_row(
-        #     "User [green1]☑" if self.active_machine_data["user_owned"] else "User [white]☐",
-        #     "Root [green1]☑" if self.active_machine_data["root_owned"] else "Root [white]☐"
-        #     )
-        # if self.active_machine_data["playInfo"]["isSpawned"]:
-        #     table.add_row(
-        #         "Status", "[green1]Spawned"
-        #     )
-        # elif self.active_machine_data["playInfo"]["isSpawning"]:
-        #     table.add_row(
-        #         "Status", "[yellow3]Spawning"
-        #     )
-        # # table.add_row("Expires", self.active_machine_data["playInfo"]["expires_at"])
-
-        # return table
-
     def handle_active_machine(self) -> None:
         """
         Handles the active machine.
@@ -225,7 +183,7 @@ class ActiveMachine(Static):
             
             self.has_active_machine = True
 
-            log = self.app.query_one(RichLog)
+            log = self.app.query_one("#log")
             log.write("\n")
             log.write("[+] Active machine found")
             log.write(f"[*] Name: {self.active_machine_data['name']}")

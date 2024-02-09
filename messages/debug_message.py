@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from textual.message import Message
-from enums.debug_level import DebugLevel
+from enums import DebugLevel
 
 @dataclass
 class DebugMessage(Message):

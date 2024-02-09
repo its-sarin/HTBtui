@@ -1,10 +1,10 @@
 import httpx
 
-from textual.widgets import DataTable, Button
+from textual.widgets import DataTable
 
-from utilities.api_token import APIToken
-from enums.debug_level import DebugLevel
-from messages.debug_message import DebugMessage
+from utilities import APIToken
+from enums import DebugLevel
+from messages import DebugMessage
 
 class RetiredMachines(DataTable):
     """DataTable widget that shows retired machines."""

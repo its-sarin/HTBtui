@@ -3,13 +3,10 @@ from textual.app import App
 from textual.widgets import RichLog
 from textual.css.query import NoMatches
 
-from screens.htb_screen import HTBScreen
-from screens.console_modal import ConsoleModal
+from screens import HTBScreen, ConsoleModal
 
-from messages.debug_message import DebugMessage
-from messages.data_received import DataReceived
-from messages.log_message import LogMessage
-from enums.debug_level import DebugLevel
+from messages import DebugMessage, DataReceived, LogMessage
+from enums import DebugLevel
 
 
 class HTBtui(App):

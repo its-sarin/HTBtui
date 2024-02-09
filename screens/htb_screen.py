@@ -4,20 +4,9 @@ from textual.widgets import Header, TabbedContent, TabPane, Button
 from textual.containers import Container
 from textual.app import ComposeResult
 
-
-from widgets.player_stats import PlayerStats
-from widgets.current_machines import CurrentMachines
-from widgets.retired_machines import RetiredMachines
-from widgets.seasonal_machines import SeasonalMachines
-from widgets.vpn_connection import VPNConnection
-from widgets.player_activity import PlayerActivity
-from widgets.active_machine import ActiveMachine
-from widgets.machine_control import MachineDetails
-from widgets.output_log import OutputLog
-
-from messages.debug_message import DebugMessage
-from enums.debug_level import DebugLevel 
-from messages.data_received import DataReceived
+from widgets import PlayerStats, CurrentMachines, RetiredMachines, SeasonalMachines, VPNConnection, PlayerActivity, ActiveMachine, MachineDetails, OutputLog
+from messages import DebugMessage, DataReceived
+from enums import DebugLevel 
 
 
 class HTBScreen(Screen):    

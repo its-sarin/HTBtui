@@ -1,9 +1,7 @@
 from textual import on
 from textual.widgets import RichLog
 
-from messages.debug_message import DebugMessage
-from messages.data_received import DataReceived
-from messages.log_message import LogMessage
+from messages import DebugMessage, DataReceived, LogMessage
 
 
 class OutputLog(RichLog):

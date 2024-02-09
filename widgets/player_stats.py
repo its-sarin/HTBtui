@@ -2,13 +2,11 @@ import httpx
 
 from rich.table import Table
 from rich import box
-
 from textual.widgets import Static
 
-from utilities.api_token import APIToken
-from enums.htb_ranks import Ranks
-from enums.debug_level import DebugLevel
-from messages.debug_message import DebugMessage
+from utilities import APIToken
+from enums import Ranks, DebugLevel
+from messages import DebugMessage
 
 
 

@@ -2,13 +2,12 @@ import httpx
 import pyperclip
 
 from rich.table import Table
-from rich import box
 
 from textual.widgets import Static
 
-from messages.debug_message import DebugMessage
-from enums.debug_level import DebugLevel
-from utilities.api_token import APIToken
+from messages import DebugMessage
+from enums import DebugLevel
+from utilities import APIToken
 
 class VPNConnection(Static):
     """Static widget that shows the current VPN connection status."""

@@ -10,9 +10,9 @@ from textual.app import ComposeResult
 from rich import box
 from rich.table import Table
 
-from messages.debug_message import DebugMessage
-from enums.debug_level import DebugLevel
-from utilities.api_token import APIToken
+from messages import DebugMessage
+from enums import DebugLevel
+from utilities import APIToken
 
 class ConsoleModal(ModalScreen):
     """
