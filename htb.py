@@ -1,11 +1,12 @@
 import os
 import httpx
 from enum import Enum
+
 from rich.table import Table
 from rich.console import Console
 from rich import box
 
-from utilities.api_token import APIToken
+from utilities import APIToken
 
 class SearchFilter(Enum):
     MACHINES = "machines"

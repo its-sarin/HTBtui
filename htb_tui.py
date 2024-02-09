@@ -1,7 +1,5 @@
 from textual import on
 from textual.app import App
-from textual.widgets import RichLog
-from textual.css.query import NoMatches
 
 from screens import HTBScreen, ConsoleModal
 
@@ -81,7 +79,7 @@ class HTBtui(App):
             message (DebugMessage): The debug message to log.
         """
         if message.debug_level.value <= self.debug_level.value:
-            log = self.query_one(RichLog)
+            log = self.query_one("#log")
             log.write(message.debug_data)
 
     @on(LogMessage)
@@ -92,7 +90,7 @@ class HTBtui(App):
         Args:
             message (LogMessage): The message to log.
         """
-        log = self.query_one(RichLog)
+        log = self.query_one("#log")
         log.write(message.message)
 
 

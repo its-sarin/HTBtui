@@ -1,2 +1,2 @@
 from .api_token import APIToken
-from .ping import ping
+from .ping import Ping
