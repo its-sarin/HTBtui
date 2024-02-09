@@ -72,6 +72,8 @@ class HTBScreen(Screen):
         with Container(id="player_container"):
             with Container(id="player_stats_container") as player_stats_container:
                 player_stats_container.border_title = "Player Stats"
+                player_stats_container.styles.border_title_align = "right"
+                player_stats_container.styles.border_title_style = "bold"
                 yield PlayerStats()
             with Container(id="player_activity_container") as player_activity_container:
                 player_activity_container.border_title = "Player Activity"

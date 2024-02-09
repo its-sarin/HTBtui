@@ -3,7 +3,6 @@ $secondary-lighten-1: #ddff99;
 $background: #111927;
 $background-darken-1: #171717;
 $background-lighten-1: #1a2332;
-# $border: #5b72a4;
 $border: #3d5276;
 $border-inverse: #111927;
 $border-title-color: #5775a8
@@ -13,7 +12,6 @@ $color-medium: #ffb83e;
 $color-hard: #fe0000;
 
 Screen {
-    background: $background;
 }
 
 Header {
@@ -24,12 +22,12 @@ Header {
 
 Container#player_container {
     layout: horizontal;
-    height: 40%;
+    height: 45%;
     background: $background;
 }
 
 Container#player_stats_container {
-    width: 34%;
+    width: 35%;
     height: 100%;
     margin: 0 1 1 0;
     background: $background-lighten-1;
@@ -40,7 +38,6 @@ Container#player_stats_container {
 }
 
 Container#player_activity_container {
-    # width: auto;
     height: 90%;
     background: $background;
     margin: 1 0 0 1;
@@ -64,7 +61,10 @@ PlayerActivity {
 #machines {
     layout: horizontal;
     width: 100%;
+    max-height: 55%;
     min-height: 20%;
+    background: $background;
+    color: $color;
 }
 
 #machines_container {
@@ -84,6 +84,7 @@ PlayerActivity {
     border-top: outer $border;
     border-bottom: tall #000 30%;
     border-title-color: $border-title-color;
+    border-title-style: bold;
     color: $color;
 
     #machine_details {
@@ -95,7 +96,8 @@ PlayerActivity {
 
         Rule {
             width: 100%;
-            padding: 0 1;   
+            padding: 0 1;  
+            margin: 0; 
             color: $border;
         }
     
@@ -103,14 +105,14 @@ PlayerActivity {
             color: $border-title-color;
             width: 100%;
             text-align: center;
-            margin-top: 1;
+            # margin-top: 1;
         }
     
         #feedback_container {
             layout: horizontal;
-            height: 10%;
+            height: 3;
             width: 100%;
-            margin: 1 2 0 2;
+            padding: 1 2 0 2;
     
             #feedback_sparkline_easy {
                 width: 30%;
@@ -208,8 +210,6 @@ PlayerActivity {
     }
 }
 
-
-
 Button#spawn_machine_button {
     background: $secondary;
     border-top: tall $secondary-lighten-1;
@@ -264,7 +264,8 @@ CurrentMachines > .datatable--header-hover,
 RetiredMachines > .datatable--header-hover, 
 SeasonalMachines > .datatable--header-hover,
 PlayerActivity > .datatable--header-hover {
-    background: $secondary 60%;
+    background: $background-lighten-1;
+    color: #fff;
  }
 
  PlayerActivity,

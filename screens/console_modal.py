@@ -20,7 +20,7 @@ class ConsoleModal(ModalScreen):
     """
 
     CSS_PATH = "console_modal.tcss"
-    BINDINGS = [("`", "close_console", "Dismiss Console")]
+    BINDINGS = [("~", "close_console", "Dismiss Console")]
 
     token_name = "HTB_TOKEN"
     base_url = "https://labs.hackthebox.com"
