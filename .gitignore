@@ -1,7 +1,4 @@
 *.pyc
 _examples/
 _testing/
-__pycache__/htb.cpython-312.pyc
-test.py
-test_ping.py
-htb_data.py
+__pycache__/

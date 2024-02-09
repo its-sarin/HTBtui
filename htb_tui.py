@@ -14,7 +14,7 @@ from enums.debug_level import DebugLevel
 
 class HTBtui(App):
 
-    BINDINGS = [("`", "request_console", "Show Console"), ("f", "test_clear", "Clear")]
+    BINDINGS = [("`", "expand_log", "Show Log"), ("~", "request_console", "Show Console")]
         
     SCREENS = {
         "htb_screen": HTBScreen(),
@@ -40,6 +40,14 @@ class HTBtui(App):
         self.push_screen("htb_screen")
 
     def action_request_console(self) -> None:
+        """
+        Opens the console modal.
+        """
+        log = self.query_one("#log")
+        log.write("Console requested")
+        self.push_screen("console_modal")
+
+    def action_expand_log(self) -> None:
         """
         Opens the console modal.
         """

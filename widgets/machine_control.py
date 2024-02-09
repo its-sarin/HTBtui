@@ -12,7 +12,6 @@ from utilities.api_token import APIToken
 from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 from messages.log_message import LogMessage
-from messages.data_received import DataReceived
 
 
 class MachineDetails(Static):
@@ -92,7 +91,7 @@ class MachineDetails(Static):
             yield Rule()
         with Container(id="machine_control_buttons"):
             yield Button("Spawn Machine", id="spawn_machine_button")
-            yield Button("Stop Machine", id="stop_machine_button")
+            yield Button("Stop Machine", id="stop_machine_button", variant="error")
             yield Button("Reset Machine", id="reset_machine_button", variant="default")
 
     def set_context(self, machine_id: int, machine_data: dict) -> None:
@@ -101,7 +100,7 @@ class MachineDetails(Static):
         """
         self.selected_machine_id = machine_id
         self.selected_machine_data = machine_data
-        self.border_title = f"{self.selected_machine_data['name']} :: {self.selected_machine_id}"
+        self.border_title = f"{self.selected_machine_data['name']}::{self.selected_machine_id}"
         self.handle_display_buttons()
         self.query_one("#machine_details").update(self.make_machine_details())    
 

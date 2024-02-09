@@ -1,16 +1,17 @@
 from textual import on
 from textual.screen import Screen
-from textual.widgets import Header, Footer, RichLog, TabbedContent, TabPane
-from textual.containers import Container, Horizontal
+from textual.widgets import Header, TabbedContent, TabPane, Button
+from textual.containers import Container
 from textual.app import ComposeResult
 
 
 from widgets.player_stats import PlayerStats
 from widgets.current_machines import CurrentMachines
+from widgets.retired_machines import RetiredMachines
+from widgets.seasonal_machines import SeasonalMachines
 from widgets.vpn_connection import VPNConnection
 from widgets.player_activity import PlayerActivity
 from widgets.active_machine import ActiveMachine
-from widgets.retired_machines import RetiredMachines
 from widgets.machine_control import MachineDetails
 from widgets.output_log import OutputLog
 
@@ -55,7 +56,7 @@ class HTBScreen(Screen):
         self.refresh_active_machine_ping = None
         self.has_active_machine = False
         self.active_machine_data = {}
-        self.title = ":: HTBtui ::"
+        self.title = "::HTBtui::"
 
 
     def compose(self) -> ComposeResult:
@@ -78,10 +79,13 @@ class HTBScreen(Screen):
         with Container(id="machines"):
             with Container(id="machines_container") as machines_container:
                 machines_container.border_title = "Machines"
-                with TabbedContent(id="machines_tabbed_content"):
+                with TabbedContent(id="machines_tabbed_content"):                    
                     with TabPane("Current Machines", id="current_machines_tab"):
                         with Container(id="current_machines_container"):    
-                            yield CurrentMachines()
+                            yield CurrentMachines()                    
+                    with TabPane("Seasonal Machines", id="seasonal_machines_tab"):
+                        with Container(id="seasonal_machines_container"):
+                            yield SeasonalMachines()
                     with TabPane("Retired Machines", id="retired_machines_tab"):
                         with Container(id="retired_machines_container"):
                             yield RetiredMachines()
@@ -105,6 +109,15 @@ class HTBScreen(Screen):
             machine_details = self.query_one(MachineDetails)
             if not machine_details.has_active_machine():
                 machine_details.set_context(event.row_key.value, event.control.machine_data[int(event.row_key.value)])
+
+        if event.control.id == "seasonal_machines":
+            self.post_message(DebugMessage({"Seasonal Machines": event}, DebugLevel.LOW))
+            machine_details = self.query_one(MachineDetails)
+            if not machine_details.has_active_machine():
+                if event.row_key.value in event.control.active_ids:
+                    machine_details.set_context(event.row_key.value, self.query_one("#current_machines").machine_data[int(event.row_key.value)])
+                else:
+                    machine_details.clear_context()
     
     @on(DataReceived)
     def handle_data_received(self, message: DataReceived) -> None:
@@ -117,7 +130,12 @@ class HTBScreen(Screen):
         Returns:
             None
         """
-        machine_details = self.query_one(MachineDetails)
-        if message.key == "active_machine":
-            machine_details.active_machine_data = message.data if message.data["id"] else {}
-        self.post_message(DebugMessage({"[!] Active Machine Data": message.data}, DebugLevel.LOW))
+        try:
+            machine_details = self.query_one(MachineDetails)
+            if message.key == "active_machine":
+                if isinstance(message.data, dict) and "id" in message.data:
+                    machine_details.active_machine_data = message.data if message.data["id"] else {}
+
+            self.post_message(DebugMessage({"[!] Active Machine Data": message.data}, DebugLevel.MEDIUM))
+        except Exception as e:
+            self.post_message(DebugMessage({"Error": e}, DebugLevel.MEDIUM))

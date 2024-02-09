@@ -1,9 +1,6 @@
 import httpx
 import pyperclip
 
-from rich.table import Table
-from rich import box
-
 from textual.widgets import Static
 
 from messages.debug_message import DebugMessage

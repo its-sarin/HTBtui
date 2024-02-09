@@ -1,13 +1,13 @@
 import httpx
 
-from textual.widgets import DataTable, Button
+from textual.widgets import DataTable
 
 from utilities.api_token import APIToken
 from enums.debug_level import DebugLevel
 from messages.debug_message import DebugMessage
 
 class CurrentMachines(DataTable):
-    """Static widget that shows the current machines."""
+    """DataTable widget that shows the current machines."""
 
     token_name = "HTB_TOKEN"
     base_url = "https://labs.hackthebox.com"
@@ -37,7 +37,6 @@ class CurrentMachines(DataTable):
         self.add_column(label="ID")
         self.add_column(label="Name")
         self.add_column(label="OS")
-        # self.add_column(label="Difficulty")
         self.add_column(label="User")
         self.add_column(label="Root")
         self.add_column(label="Points")

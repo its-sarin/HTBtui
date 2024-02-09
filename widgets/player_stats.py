@@ -71,7 +71,7 @@ class PlayerStats(Static):
         try:
             table: Table = await self.get_profile()
             self.loading = False
-            self.parent.border_title = f"{self.user_data['name']} :: {self.user_data['id']}"
+            self.parent.border_title = f"{self.user_data['name']}::{self.user_data['id']}"
             self.parent.styles.border_title_color = "#9fef00"
             self.update(table)
         except Exception as e:

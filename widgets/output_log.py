@@ -4,7 +4,6 @@ from textual.widgets import RichLog
 from messages.debug_message import DebugMessage
 from messages.data_received import DataReceived
 from messages.log_message import LogMessage
-from enums.debug_level import DebugLevel
 
 
 class OutputLog(RichLog):

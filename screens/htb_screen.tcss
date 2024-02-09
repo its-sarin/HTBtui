@@ -1,9 +1,11 @@
 $secondary: #9fef00;
+$secondary-lighten-1: #ddff99;
 $background: #111927;
 $background-darken-1: #171717;
 $background-lighten-1: #1a2332;
 # $border: #5b72a4;
 $border: #3d5276;
+$border-inverse: #111927;
 $border-title-color: #5775a8
 $color: #a4b1cd;
 $color-easy: #90cd3f;
@@ -11,12 +13,12 @@ $color-medium: #ffb83e;
 $color-hard: #fe0000;
 
 Screen {
-    # layout: vertical;
+    background: $background;
 }
 
 Header {
     color: $secondary;
-    background: $background-darken-1;
+    background: $background;
     text-style: bold;
 }
 
@@ -29,17 +31,20 @@ Container#player_container {
 Container#player_stats_container {
     width: 34%;
     height: 100%;
-    background: $background;
-    border: $border;
+    margin: 0 1 1 0;
+    background: $background-lighten-1;
+    border-top: outer $border;
+    border-bottom: tall #000 30%;
     border-title-color: $border-title-color;
     overflow-y: auto;
 }
 
 Container#player_activity_container {
     # width: auto;
-    height: 100%;
+    height: 90%;
     background: $background;
-    border: $border;
+    margin: 1 0 0 1;
+    border-right: none;
     border-title-color: $border-title-color;
 }
 
@@ -64,18 +69,20 @@ PlayerActivity {
 
 #machines_container {
     height: 100%;
-    width: 70%;
+    width: 65%;
+    padding: 1 1 0 0;
     background: $background;
-    border: $border;
-    border-title-color: $border-title-color;
+    # border: $border;
+    # border-title-color: $border-title-color;
 }
 
 #machine_control {
-    width: 30%;
-    max-width: 30%;
+    width: 35%;
     height: 100%;
-    background: $background;
-    border: $border;
+    margin: 1 0 1 1;
+    background: $background-lighten-1;
+    border-top: outer $border;
+    border-bottom: tall #000 30%;
     border-title-color: $border-title-color;
     color: $color;
 
@@ -149,6 +156,7 @@ PlayerActivity {
         Button#stop_machine_button,
         Button#reset_machine_button {
             width: 100%;
+            margin: 0 1;
             display: none;
         }
     }
@@ -204,14 +212,22 @@ PlayerActivity {
 
 Button#spawn_machine_button {
     background: $secondary;
-    border-top: tall $secondary 50%;
+    border-top: tall $secondary-lighten-1;
     border-bottom: tall $secondary 30%;
+
+    &:hover {
+        background: $secondary 90%;
+    }
 }
 
 Button#stop_machine_button {
     background: #c6383c;
-    border-top: tall #c6383c 50%;
+    border-top: tall #a6595c;
     border-bottom: tall #c6383c 30%;
+
+    &:hover {
+        background: #c6383c 90%;
+    }
 }
 
 #machines_tabbed_content {
@@ -229,7 +245,9 @@ ContentSwitcher#machines_switcher {
     height: 100%;
 }
 
-CurrentMachines, RetiredMachines {
+CurrentMachines,
+RetiredMachines,
+SeasonalMachines {
     width: 100%;
     min-height: 100%;
     max-height: 100%;
@@ -237,12 +255,14 @@ CurrentMachines, RetiredMachines {
 
 CurrentMachines > .datatable--header,
 RetiredMachines > .datatable--header,
+SeasonalMachines > .datatable--header,
 PlayerActivity > .datatable--header {
     background: $background-lighten-1;
 }
 
 CurrentMachines > .datatable--header-hover,
 RetiredMachines > .datatable--header-hover, 
+SeasonalMachines > .datatable--header-hover,
 PlayerActivity > .datatable--header-hover {
     background: $secondary 60%;
  }
@@ -250,6 +270,7 @@ PlayerActivity > .datatable--header-hover {
  PlayerActivity,
  CurrentMachines,
  RetiredMachines,
+ SeasonalMachines,
  #player_stats_container {
     color: $color;
     scrollbar-background: #111;
