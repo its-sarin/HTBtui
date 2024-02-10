@@ -1,13 +1,15 @@
 import httpx
 
-from textual.widgets import DataTable
+from textual.app import ComposeResult
+from textual.containers import Container
+from textual.widgets import DataTable, Static
 
 from utilities import APIToken
 from enums import DebugLevel
 from messages import DebugMessage
 
 
-class PlayerActivity(DataTable):
+class PlayerActivity(Static):
     """Static widget that shows the player stats."""
 
     token_name = "HTB_TOKEN"
@@ -22,28 +24,31 @@ class PlayerActivity(DataTable):
             "User-Agent": "HTBClient/1.0.0"
         }
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.loading = True
         self.user_data = {
             "id" : None,
         }
         self.activity_data = []
 
-        self.show_header = True
-        self.cursor_type = "row"
-        
-        self.add_column(label="Activity")
-        self.add_column(label="Target")
-        self.add_column(label="Date")
-        self.add_column(label="Points")
 
+    def compose(self) -> ComposeResult:
+        dt = DataTable(id="player_activity_table")
+        dt.show_header = True
+        dt.cursor_type = "row"
+        
+        dt.add_column(label="Activity")
+        dt.add_column(label="Target")
+        dt.add_column(label="Date")
+        dt.add_column(label="Points")
+        with Container(id="player_activity_container"):
+            yield dt
 
     async def on_mount(self) -> None:
         """Mount the widget."""
         self.loading = True
         self.run_worker(self.update_activity())
-
 
     async def update_activity(self) -> None:
         """
@@ -51,10 +56,10 @@ class PlayerActivity(DataTable):
         """       
         try:
             await self.get_activity_list()
-            self.loading = False
             self.make_activity_list()
+            self.loading = False            
         except Exception as e:
-            self.update(f"Error: {e}")
+            self.post_message(DebugMessage({"Error": e}, DebugLevel.MEDIUM))
 
     async def get_user_id(self) -> str:
         """
@@ -104,8 +109,10 @@ class PlayerActivity(DataTable):
                 return f"Error: {e}"
 
     def make_activity_list(self): 
+        dt = self.query_one(DataTable)
+
         for activity in self.activity_data:
-            self.add_row(
+            dt.add_row(
                 f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]}",
                 f"[b]{activity["name"]}[/b]",
                 # {activity['object_type']}

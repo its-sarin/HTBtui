@@ -2,7 +2,10 @@ import httpx
 
 from rich.table import Table
 from rich import box
-from textual.widgets import Static
+from textual.app import ComposeResult
+from textual.containers import Container
+from textual.widgets import Static, ProgressBar, Label
+from textual.reactive import Reactive
 
 from utilities import APIToken
 from enums import Ranks, DebugLevel
@@ -26,9 +29,9 @@ class PlayerStats(Static):
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }
-
-    def __init__(self) -> None:
-        super().__init__()        
+    
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)        
         self.user_data = {
             "id" : None,
             "name" : None,
@@ -56,6 +59,16 @@ class PlayerStats(Static):
             }
         }
 
+    def compose(self) -> ComposeResult:
+        """Compose the widget."""
+        
+        with Container(id="player_stats_container"):
+            yield Label(id="player_rank_label")
+            yield ProgressBar(id="player_rank_progress", show_percentage=True, show_eta=False, total=100)
+            yield Label(id="player_rank_progress_label")
+            yield Static(id="player_stats_table")
+
+
     async def on_mount(self) -> None:
         """Mount the widget."""
         self.loading = True
@@ -68,12 +81,17 @@ class PlayerStats(Static):
         """       
         try:
             table: Table = await self.get_profile()
+            cntr = self.query_one("#player_stats_container")
+            cntr.border_title = f"{self.user_data['name']}::{self.user_data['id']}"
+            cntr.styles.border_title_color = "#9fef00"
+            self.query_one("#player_rank_label").update(self.id_to_rank(self.user_data["rank"]))
+            self.query_one("#player_stats_table").update(table)
+            self.query_one("#player_rank_progress", ProgressBar).advance(self.user_data["rank_progress"])
+            self.query_one("#player_rank_progress_label").update(self.id_to_rank(self.user_data['rank']+1))
             self.loading = False
-            self.parent.border_title = f"{self.user_data['name']}::{self.user_data['id']}"
-            self.parent.styles.border_title_color = "#9fef00"
-            self.update(table)
+            
         except Exception as e:
-            self.update(f"Error: {e}")
+            self.query_one("#player_stats_table").update(f"Error: {e}")
 
     async def get_user_id(self) -> str:
         """
@@ -192,29 +210,25 @@ class PlayerStats(Static):
                 return rank.value
 
     def make_profile(self):
-        table = Table(
-            box=box.SIMPLE, 
-            show_header=False, 
-            show_footer=False,
+
+        table = Table.grid(
             pad_edge=False,
             expand=True
         )
 
-        table.add_column(style="bold", ratio=1)
-        table.add_column(style="", ratio=1)
+        table.add_column(ratio=1)
+        table.add_column(ratio=1)
+        table.add_column(ratio=1)
+        table.add_column(ratio=1)
 
-        # user stats
-        # table.add_row("Name", f"[#9fef00]{self.user_data["name"]}")
-        # table.add_row("ID", str(self.user_data["id"]))
-        table.add_row("Rank", self.id_to_rank(self.user_data["rank"]))
-        table.add_row("Progress", str(self.user_data["rank_progress"])+ "%")
-        table.add_row("Ranking", str(self.user_data["ranking"]))        
-        table.add_row("Points", str(self.user_data["points"]))
-        table.add_row("User Owns", str(self.user_data["user_owns"]))
-        table.add_row("System Owns", str(self.user_data["system_owns"]))
-        table.add_row("User Bloods", str(self.user_data["user_bloods"]))
-        table.add_row("System Bloods", str(self.user_data["system_bloods"]))
-        table.add_row("Respects", str(self.user_data["respects"]))
+
+        table.add_row(f"# {self.user_data["ranking"]}", "" , f"{self.user_data["points"]} pts", "") 
+        table.add_row()       
+        table.add_row("👤🏳️", f"{self.user_data["user_owns"]}", "🖥️ 🏳️", f"{self.user_data["system_owns"]}")
+        table.add_row("👤🩸", f"{self.user_data["user_bloods"]}", "🖥️ 🩸", f"{self.user_data["system_bloods"]}")
+        table.add_row()
+        table.add_row("Respects", "", f"{self.user_data["respects"]}", "")
+        table.add_row()
         
         # season stats
         table.add_row("Season Tier", self.season_data["league"])

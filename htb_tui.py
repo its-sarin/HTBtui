@@ -3,7 +3,7 @@ from textual.app import App
 
 from screens import HTBScreen, ConsoleModal
 
-from messages import DebugMessage, DataReceived, LogMessage
+from messages import DebugMessage, LogMessage
 from enums import DebugLevel
 
 
@@ -19,9 +19,7 @@ class HTBtui(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self.message_queue = []
-        self.context_data = {}
-        self.debug_level = DebugLevel.LOW
+        self.debug_level = DebugLevel.MEDIUM
     
     def on_ready(self) -> None:
         """
@@ -44,31 +42,9 @@ class HTBtui(App):
 
     def action_expand_log(self) -> None:
         """
-        Opens the console modal.
+        Expands the log.
         """
-        # log = self.query_one(RichLog)
-        # log.write("Console requested")
-        # self.push_screen("console_modal")
         self.query_one("#log").toggle_class("expanded")
-
-    def action_test_clear(self) -> None:
-        """
-        Clears the log.
-        """
-        test = self.query_one("#machine_control")
-        test.active_machine_data = {}
-    
-    @on(DataReceived)
-    def add_data_to_context(self, message: DataReceived) -> None:
-        """
-        Adds data to the context.
-
-        Args:
-            message (DataReceived): The data to add to the context.
-        """
-        self.context_data[message.key] = message.data
-        # self.query_one(RichLog).write(f"Data received: {message.key}")
-        # self.query_one(RichLog).write(self.context_data[message.key])
 
     @on(DebugMessage)
     def log_debug_messages(self, message: DebugMessage) -> None:

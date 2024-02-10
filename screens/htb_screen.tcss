@@ -20,43 +20,81 @@ Header {
     text-style: bold;
 }
 
-Container#player_container {
+Rule.app_rule {
+    margin: 0;
+    padding: 0 1;
+    background: $background;
+    color: $border;
+    display: none;
+}
+
+#player_information_container {
     layout: horizontal;
     height: 45%;
-    background: $background;
-}
-
-Container#player_stats_container {
-    width: 35%;
-    height: 100%;
-    margin: 0 1 1 0;
-    background: $background-lighten-1;
-    border-top: outer $border;
-    border-bottom: tall #000 30%;
-    border-title-color: $border-title-color;
-    overflow-y: auto;
-}
-
-Container#player_activity_container {
-    height: 90%;
-    background: $background;
-    margin: 1 0 0 1;
-    border-right: none;
-    border-title-color: $border-title-color;
-}
-
-PlayerStats {
     width: 100%;
-    min-height: 100%;
-    height: auto;
-    color: $color;
+    background: $background;
+
+    #player_stats {
+        width: 35%;
+        height: 100%;
+
+        Container#player_stats_container {
+            max-width: 100%;
+            height: 100%;
+            margin: 0 1 1 0;
+            padding: 1 0;
+            background: $background-lighten-1;
+            border-top: outer $border;
+            border-bottom: tall #000 30%;
+            border-title-color: $border-title-color;
+            border-title-style: bold;
+            border-title-align: right;
+            overflow-y: hidden;
+
+            #player_rank_label,
+            #player_rank_progress_label {
+                padding: 0 1;
+            }
+
+            #player_rank_progress {                
+                padding: 0 1;
+
+                #bar {
+                    width: 25;
+                    .bar--bar {
+                        color: $secondary;
+                    }
+                }
+            }
+
+            #player_rank_progress_label {
+                width: 100%;
+                text-align: right;
+            }
+
+            #player_stats_table {
+                width: 100%;
+                padding: 1 1 0 1;
+            }
+        }
+    }
+    
+    #player_activity {
+        width: 65%;
+
+        #player_activity_container {
+            width: 100%;
+            padding: 1 0;
+
+            #player_activity_table {
+                
+            }
+        }
+    }
 }
 
-PlayerActivity {
-    width: 100%;
-    height: 100%;
-    color: $color;    
-}
+
+
 
 #machines {
     layout: horizontal;
@@ -256,19 +294,19 @@ SeasonalMachines {
 CurrentMachines > .datatable--header,
 RetiredMachines > .datatable--header,
 SeasonalMachines > .datatable--header,
-PlayerActivity > .datatable--header {
+PlayerActivity DataTable > .datatable--header {
     background: $background-lighten-1;
 }
 
 CurrentMachines > .datatable--header-hover,
 RetiredMachines > .datatable--header-hover, 
 SeasonalMachines > .datatable--header-hover,
-PlayerActivity > .datatable--header-hover {
+PlayerActivity DataTable > .datatable--header-hover {
     background: $background-lighten-1;
     color: #fff;
  }
 
- PlayerActivity,
+ PlayerActivity DataTable,
  CurrentMachines,
  RetiredMachines,
  SeasonalMachines,

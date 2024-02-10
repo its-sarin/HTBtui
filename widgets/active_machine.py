@@ -22,11 +22,12 @@ class ActiveMachine(Static):
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "HTBClient/1.0.0"
         }
-    #init with args and kwargs
+    
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)                
         self.loading = True
         self.refresh_interval = 10
+        self.active_season_machine_id: int = None
         self.active_machine_data = {
             "id": None,
             "status": None, 
@@ -40,6 +41,7 @@ class ActiveMachine(Static):
             "rating": None,
             "release": None,
             "active": None,
+            "season_active": None,
             "feedbackForChart": None,
             "user_owns_count": None,
             "root_owns_count": None,
@@ -72,7 +74,7 @@ class ActiveMachine(Static):
 
     async def update_active_machine(self) -> None:
         """
-        Updates the active machine widget with the latest active machine data from self.htb.
+        Updates the active machine widget with the latest active machine data from HTB.
         """
         try:
             data = await self.get_active_machine()            
@@ -85,6 +87,13 @@ class ActiveMachine(Static):
     async def get_active_machine(self):
         try:
             async with httpx.AsyncClient() as client:
+                if self.active_season_machine_id is None:
+                    response = await client.get(self.base_url + self.endpoint["active_season_machine"], headers=self.headers)
+
+                    if response.status_code == 200:
+                        data = response.json()
+                        self.active_season_machine_id = data["data"]["id"]
+
                 response = await client.get(self.base_url + self.endpoint["active_machine"], headers=self.headers)
 
                 if response.status_code == 200:
@@ -105,8 +114,8 @@ class ActiveMachine(Static):
                         self.active_machine_data["rating"] = None
                         self.active_machine_data["release"] = None
                         self.active_machine_data["active"] = False
+                        self.active_machine_data["season_active"] = False
                         self.active_machine_data["feedbackForChart"] = None
-                        self.active_machine_data["is_competitive"] = False
                         self.active_machine_data["user_owns_count"] = None
                         self.active_machine_data["root_owns_count"] = None
                         self.active_machine_data["playInfo"]["isSpawned"] = False
@@ -120,9 +129,14 @@ class ActiveMachine(Static):
                     # assign data to self.active_machine_data
                     self.active_machine_data["status"] = "Active"
                     self.active_machine_data["id"] = data["info"]["id"]
+                    if self.active_machine_data["id"] == self.active_season_machine_id:
+                        self.active_machine_data["season_active"] = True 
+                    else:
+                        self.active_machine_data["season_active"] = False
+                    self.active_machine_data["name"] = data["info"]["name"]
                     if "ip" in data["info"]:
                         self.active_machine_data["ip"] = data["info"]["ip"]
-                    self.active_machine_data["name"] = data["info"]["name"]
+                    
 
                     # get additional machine data
                     response = await client.get(self.base_url + self.endpoint["active_machine_profile"] + str(self.active_machine_data["id"]), headers=self.headers)
@@ -169,35 +183,3 @@ class ActiveMachine(Static):
             return f"{self.active_machine_data["name"]} :: [#9fef00]{self.active_machine_data["status"]}"
         
         return f"{self.active_machine_data["name"]} :: [#9fef00]{self.active_machine_data["ip"]}"
-    
-    def handle_active_machine(self) -> None:
-        """
-        Handles the active machine.
-
-        If there is an active machine, it writes the machine details to the log and starts pinging the machine at regular intervals.
-        If there is no active machine, it stops pinging the machine (if already started).
-        """
-        if self.active_machine_data["id"] is not None:
-            if self.has_active_machine:
-                return
-            
-            self.has_active_machine = True
-
-            log = self.app.query_one("#log")
-            log.write("\n")
-            log.write("[+] Active machine found")
-            log.write(f"[*] Name: {self.active_machine_data['name']}")
-            log.write(f"[*] IP: {self.active_machine_data['ip']}")
-            log.write(f"[*] OS: {self.active_machine_data['os']}")
-            log.write(f"[*] Difficulty: {self.active_machine_data['difficulty']}")
-            log.write("\n")
-
-            self.refresh_active_machine_ping = self.set_interval(
-                self.PING_INTERVAL,
-                self.ping_active_machine
-                )
-        else:
-            self.has_active_machine = False
-            if self.refresh_active_machine_ping is not None:
-                self.refresh_active_machine_ping.stop()
-

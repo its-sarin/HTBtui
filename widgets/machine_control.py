@@ -11,6 +11,7 @@ from rich.table import Table
 from utilities import APIToken
 from enums import DebugLevel
 from messages import DebugMessage, LogMessage
+from messages.log_message import LogMessage
 
 
 class MachineDetails(Static):
@@ -24,6 +25,9 @@ class MachineDetails(Static):
             "spawn_machine": "/api/v4/vm/spawn", # POST DATA {"machine_id": id}
             "terminate_machine": "/api/v4/vm/terminate", # POST DATA {"machine_id": id}
             "reset_machine": "/api/v4/vm/reset", # POST DATA {"machine_id": id}
+            "start_arena_machine": "/api/v4/arena/start", 
+            "stop_arena_machine": "/api/v4/arena/stop", 
+            "reset_arena_machine": "/api/v4/arena/reset" 
         }
     }
     headers = {
@@ -173,7 +177,7 @@ class MachineDetails(Static):
         """
         feedback = self.selected_machine_data["feedbackForChart"]
         feedback_data = []
-        for key, value in feedback.items():
+        for _, value in feedback.items():
             feedback_data.append(value)
         
         self.query_one("#feedback_sparkline_easy").data = feedback_data[slice(3)]
@@ -222,11 +226,6 @@ class MachineDetails(Static):
             f"{self.selected_machine_data["rating"]} stars"
         )
 
-        # table.add_row(
-        #     "Active" if self.selected_machine_data["active"] else "Inactive",
-        #     "Competitive" if self.selected_machine_data["is_competitive"] else "Non-Competitive"
-        # )
-
         # table.add_row("Labels", self.selected_data["labels"])
             
         table.add_row("User Owns", str(self.selected_machine_data["user_owns_count"]))
@@ -259,10 +258,15 @@ class MachineDetails(Static):
             machine_id (int): The ID of the machine to start.
 
         Returns:
-            None
-        """
-        self.app.post_message(LogMessage(f"[+] Starting machine with id: {machine_id}"))
-        data = await self.spawn_machine(machine_id)
+            bool: True if the machine was started, otherwise False.
+        """        
+        if self.selected_machine_data["is_competitive"]:
+            self.app.post_message(LogMessage(f"[+] Starting arena machine"))
+            data = await self.start_arena_machine()
+        else:
+            self.app.post_message(LogMessage(f"[+] Starting machine with id: {machine_id}"))
+            data = await self.spawn_machine(machine_id)
+
         if "message" in data:
             self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
 
@@ -287,24 +291,21 @@ class MachineDetails(Static):
         """
         Stops the active machine.
 
-        If there is no active machine, it logs a message and returns.
-        Otherwise, it retrieves the machine ID of the active machine,
-        stops the machine, and logs the result.
-
         Returns:
-            None
+            bool: True if the machine was stopped, otherwise False.
         """
-        machine_id = self.selected_machine_id
-        self.app.post_message(LogMessage(f"[-] Stopping machine with id: {machine_id}"))
-        data = await self.terminate_machine(machine_id)
+        if self.active_machine_data["season_active"]:
+            self.app.post_message(LogMessage(f"[-] Stopping arena machine"))
+            data = await self.stop_arena_machine()
+        else:
+            machine_id = self.active_machine_data["id"]
+            self.app.post_message(LogMessage(f"[-] Stopping machine with id: {machine_id}"))
+            data = await self.terminate_machine(machine_id)
         if "message" in data:
             self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
 
             if "terminated" in data["message"]:
-                # self.active_machine_id = None
-
                 return True
-            
             else:
                 return False
 
@@ -324,15 +325,16 @@ class MachineDetails(Static):
         """
         Resets the active machine.
 
-        This method resets the active machine by calling the `reset_machine` function from the `htb` module.
-        If there is no active machine, it logs a message indicating that there is no active machine.
-
         Returns:
             None
         """
-        machine_id = self.selected_machine_id
-        
-        data = await self.respawn_machine(machine_id)
+        if self.active_machine_data["season_active"]:
+            self.app.post_message(LogMessage(f"[-] Resetting arena machine"))
+            data = await self.reset_arena_machine()
+        else:
+            machine_id = self.selected_machine_id
+            self.app.post_message(LogMessage(f"[-] Resetting machine with id: {machine_id}"))
+            data = await self.respawn_machine(machine_id)
         if "message" in data:
             self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
 
@@ -358,11 +360,40 @@ class MachineDetails(Static):
         except Exception as e:
             return f"Error: {e}"
         
-
     async def respawn_machine(self, machine_id: int):
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(self.base_url + self.endpoints["POST"]["reset_machine"], headers=self.headers, data={"machine_id": machine_id})
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+    async def start_arena_machine(self):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["start_arena_machine"], headers=self.headers)
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+    async def stop_arena_machine(self):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["stop_arena_machine"], headers=self.headers)
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+    async def reset_arena_machine(self):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["reset_arena_machine"], headers=self.headers)
                 data = response.json()
                 
                 return data                

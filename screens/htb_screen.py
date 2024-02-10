@@ -1,6 +1,6 @@
 from textual import on
 from textual.screen import Screen
-from textual.widgets import Header, TabbedContent, TabPane, Button
+from textual.widgets import Header, TabbedContent, TabPane, Rule
 from textual.containers import Container
 from textual.app import ComposeResult
 
@@ -58,15 +58,10 @@ class HTBScreen(Screen):
 
         yield Header(show_clock=True)
 
-        with Container(id="player_container"):
-            with Container(id="player_stats_container") as player_stats_container:
-                player_stats_container.border_title = "Player Stats"
-                player_stats_container.styles.border_title_align = "right"
-                player_stats_container.styles.border_title_style = "bold"
-                yield PlayerStats()
-            with Container(id="player_activity_container") as player_activity_container:
-                player_activity_container.border_title = "Player Activity"
-                yield PlayerActivity()
+        with Container(id="player_information_container"):
+            yield PlayerStats(id="player_stats")
+            yield PlayerActivity(id="player_activity")
+        yield Rule(classes="app_rule")
         with Container(id="machines"):
             with Container(id="machines_container") as machines_container:
                 machines_container.border_title = "Machines"
@@ -127,6 +122,6 @@ class HTBScreen(Screen):
                 if isinstance(message.data, dict) and "id" in message.data:
                     machine_details.active_machine_data = message.data if message.data["id"] else {}
 
-            self.post_message(DebugMessage({"[!] Active Machine Data": message.data}, DebugLevel.MEDIUM))
+            self.post_message(DebugMessage({"[!] Active Machine Data": message.data}, DebugLevel.HIGH))
         except Exception as e:
             self.post_message(DebugMessage({"Error": e}, DebugLevel.MEDIUM))
