@@ -90,6 +90,15 @@ Rule.app_rule {
     #player_activity {
         width: 65%;
 
+        DataTable > .datatable--header {
+            background: $background-lighten-1;
+        }
+
+        DataTable > .datatable--header-hover {
+            background: $background-lighten-1;
+            color: #fff;
+         }
+
         #player_activity_container {
             width: 100%;
             padding: 1 0;
@@ -114,6 +123,23 @@ Rule.app_rule {
 
         #machines_tabbed_content {
             width: 100%;
+
+            CurrentMachines,
+            RetiredMachines,
+            SeasonalMachines {
+                width: 100%;
+                min-height: 100%;
+                max-height: 100%;
+
+                & > .datatable--header {
+                    background: $background-lighten-1;
+                }
+
+                & > .datatable--header-hover {
+                    background: $background-lighten-1;
+                    color: #fff;
+                }
+            }
         }
     }
 
@@ -282,29 +308,6 @@ Rule.app_rule {
         }
     }
 }
-
-CurrentMachines,
-RetiredMachines,
-SeasonalMachines {
-    width: 100%;
-    min-height: 100%;
-    max-height: 100%;
-}
-
-CurrentMachines > .datatable--header,
-RetiredMachines > .datatable--header,
-SeasonalMachines > .datatable--header,
-PlayerActivity DataTable > .datatable--header {
-    background: $background-lighten-1;
-}
-
-CurrentMachines > .datatable--header-hover,
-RetiredMachines > .datatable--header-hover, 
-SeasonalMachines > .datatable--header-hover,
-PlayerActivity DataTable > .datatable--header-hover {
-    background: $background-lighten-1;
-    color: #fff;
- }
 
  PlayerActivity DataTable,
  CurrentMachines,
