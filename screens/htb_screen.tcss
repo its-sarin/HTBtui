@@ -54,16 +54,24 @@ Rule.app_rule {
             #player_rank_label,
             #player_rank_progress_label {
                 padding: 0 1;
+                width: 100%;
             }
 
             #player_rank_progress {                
                 padding: 0 1;
+                width: 100%;
 
                 #bar {
-                    width: 25;
+                    width: 90%;
+                    padding-right: 1;
                     .bar--bar {
                         color: $secondary;
                     }
+                }
+
+                #percentage {
+                    width: 10%;
+                    text-align: right;
                 }
             }
 
@@ -186,11 +194,27 @@ Rule.app_rule {
             }
         } 
     }
-    
 
     #machine_control_buttons {
-        height: auto;
         dock: bottom;
+        height: 10;
+
+        #submit_flag_container {
+            width: 100%;
+            layout: horizontal;
+            display: none;
+
+    
+            #submit_flag_input {
+                width: 70%;
+            }
+    
+            Button#submit_flag_button {
+                min-width: 0;
+                width: 30%;
+                margin-right: 1;
+            }
+        }
 
         Button#spawn_machine_button,
         Button#stop_machine_button,
@@ -210,12 +234,16 @@ Rule.app_rule {
     }
 
     #machine_control_buttons {
+        display: block;
+
+        #submit_flag_container,
+        Button#stop_machine_button,
+        Button#reset_machine_button {
+            display: block;
+        }
+
         Button#spawn_machine_button {
             display: none;
-        }
-        Button#stop_machine_button,
-        Button#reset_machine_button{
-            display: block;
         }
     }
 }
@@ -248,7 +276,8 @@ Rule.app_rule {
     }
 }
 
-Button#spawn_machine_button {
+Button#spawn_machine_button,
+Button#submit_flag_button {
     background: $secondary;
     border-top: tall $secondary-lighten-1;
     border-bottom: tall $secondary 30%;

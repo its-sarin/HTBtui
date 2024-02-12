@@ -2,7 +2,7 @@ import httpx
 from datetime import datetime
 from textual import on
 from textual.app import ComposeResult
-from textual.widgets import Static, Button, Sparkline, Label, Rule
+from textual.widgets import Static, Button, Sparkline, Label, Rule, Input
 from textual.containers import Container
 from textual.reactive import Reactive
 
@@ -27,7 +27,9 @@ class MachineDetails(Static):
             "reset_machine": "/api/v4/vm/reset", # POST DATA {"machine_id": id}
             "start_arena_machine": "/api/v4/arena/start", 
             "stop_arena_machine": "/api/v4/arena/stop", 
-            "reset_arena_machine": "/api/v4/arena/reset" 
+            "reset_arena_machine": "/api/v4/arena/reset",
+            "submit_flag": "/api/v4/machine/own", # POST DATA {"machine_id": id, "flag": flag}
+            "submit_arena_flag": "/api/v4/arena/own", # POST DATA {"flag": flag}
         }
     }
     headers = {
@@ -90,9 +92,11 @@ class MachineDetails(Static):
                 yield Sparkline(id="feedback_sparkline_easy")
                 yield Sparkline(id="feedback_sparkline_medium")
                 yield Sparkline(id="feedback_sparkline_hard")
-            yield Label("User Rated Difficulty")
-            yield Rule()
+            yield Label("User Rated Difficulty")        
         with Container(id="machine_control_buttons"):
+            with Container(id="submit_flag_container"):
+                yield Input(placeholder="Submit Flag", id="submit_flag_input")
+                yield Button("Submit", id="submit_flag_button")
             yield Button("Spawn Machine", id="spawn_machine_button")
             yield Button("Stop Machine", id="stop_machine_button", variant="error")
             yield Button("Reset Machine", id="reset_machine_button", variant="default")
@@ -103,7 +107,7 @@ class MachineDetails(Static):
         """
         self.selected_machine_id = machine_id
         self.selected_machine_data = machine_data
-        self.border_title = f"{self.selected_machine_data['name']}::{self.selected_machine_id}"
+        self.border_title = f"🖥️ {self.selected_machine_data['name']}::{self.selected_machine_id}"
         self.handle_display_buttons()
         self.query_one("#machine_details").update(self.make_machine_details())    
 
@@ -141,25 +145,27 @@ class MachineDetails(Static):
         else:
             self.clear_context()
 
-    def enable_buttons(self) -> None:
+    def enable_controls(self) -> None:
         """
         Enables the machine control buttons.
         """
         buttons = self.query(Button)
         for button in buttons:
             button.disabled = False
+        self.query_one("#submit_flag_input").disabled = False
 
-    def disable_buttons(self) -> None:
+    def disable_controls(self) -> None:
         """
         Disables the machine control buttons.
         """
         buttons = self.query(Button)
         for button in buttons:
             button.disabled = True
+        self.query_one("#submit_flag_input").disabled = True
 
     def handle_display_buttons(self) -> None:
         
-        self.enable_buttons()
+        self.enable_controls()
 
         if self.has_active_machine():
             self.add_class("active")
@@ -244,11 +250,9 @@ class MachineDetails(Static):
         """
         Event handler for when the spawn machine button is pressed.
         """
-        self.disable_buttons()
+        self.disable_controls()
         id : int = self.selected_machine_id
-        started = await self.start_machine(id)
-        if started:
-            self.app.post_message(LogMessage(f"[+] Machine started"))
+        await self.start_machine(id)
 
     async def start_machine(self, machine_id: int) -> bool:
         """
@@ -266,26 +270,19 @@ class MachineDetails(Static):
         else:
             self.app.post_message(LogMessage(f"[+] Starting machine with id: {machine_id}"))
             data = await self.spawn_machine(machine_id)
-
-        if "message" in data:
-            self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
-
-            if "deployed" in data["message"]:
-                self.app.post_message(LogMessage(f"[+] Active machine ID: {machine_id}"))
+        if data:
+            self.app.post_message(DebugMessage({f"[!] {data}"}, DebugLevel.LOW))
+            if "message" in data:            
+                self.app.post_message(LogMessage(f"[+] Machine started: {machine_id}"))
+                self.notify(data["message"])
                 
-                return True
-            else:
-                return False
-
     @on(Button.Pressed, selector="#stop_machine_button")
     async def stop_button_pressed(self) -> None:
         """
         Event handler for when the stop machine button is pressed.
         """
-        self.disable_buttons()
-        stopped = await self.stop_machine()
-        if stopped:
-            self.app.post_message(LogMessage(f"[+] Machine stopped"))
+        self.disable_controls()
+        await self.stop_machine()            
 
     async def stop_machine(self) -> bool:
         """
@@ -301,25 +298,21 @@ class MachineDetails(Static):
             machine_id = self.active_machine_data["id"]
             self.app.post_message(LogMessage(f"[-] Stopping machine with id: {machine_id}"))
             data = await self.terminate_machine(machine_id)
-        if "message" in data:
-            self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
-
-            if "terminated" in data["message"]:
-                return True
-            else:
-                return False
+        if data:
+            self.app.post_message(DebugMessage({f"[!] {data}"}, DebugLevel.LOW))
+            if "message" in data:
+                self.app.post_message(LogMessage(f"[+] Machine stopped"))
+                self.notify("Machine stopped")
 
     @on(Button.Pressed, selector="#reset_machine_button")
     async def reset_button_pressed(self) -> None:
         """
         Event handler for when the reset machine button is pressed.
         """
-        self.disable_buttons()
+        self.disable_controls()
         self.app.post_message(LogMessage(f"[-] Restting machine with id: {self.selected_machine_id}"))
-        data = await self.reset_machine()
-        if data:
-            self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
-        self.app.post_message(LogMessage(f"[+] Machine reset"))
+        await self.reset_machine()
+        self.enable_controls()
 
     async def reset_machine(self) -> None:
         """
@@ -335,9 +328,43 @@ class MachineDetails(Static):
             machine_id = self.selected_machine_id
             self.app.post_message(LogMessage(f"[-] Resetting machine with id: {machine_id}"))
             data = await self.respawn_machine(machine_id)
-        if "message" in data:
-            self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
+        if data:
+            self.app.post_message(DebugMessage({f"[!] {data}"}, DebugLevel.LOW))  
+            if "message" in data:
+                self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
+                self.notify(data["message"])
 
+    async def on_input_submitted(self, message: Input.Submitted) -> None:
+        """
+        Event handler for when the submit flag input is submitted.
+        """
+        self.disable_controls()
+        message.control.clear()
+        await self.submit_flag(message.value, self.selected_machine_id)
+        self.enable_controls()        
+
+    async def submit_flag(self, flag: str, machine_id: int = None) -> None:
+        """
+        Submits a flag for the active machine.
+
+        Args:
+            flag (str): The flag to submit.
+            machine_id (int): The ID of the machine to submit the flag to.
+
+        Returns:
+            None
+        """
+        if self.active_machine_data["season_active"]:
+            self.app.post_message(LogMessage(f"[+] Submitting flag for arena machine"))
+            data = await self.send_arena_flag(flag)
+        else:
+            self.app.post_message(LogMessage(f"[+] Submitting flag for machine with id: {machine_id}"))
+            data = await self.send_flag(flag, machine_id)
+        if data:
+            self.app.post_message(DebugMessage({f"[!] {data}"}, DebugLevel.LOW))
+            if "message" in data:
+                self.app.post_message(LogMessage(f"[!] {data['message']}"))
+                self.notify(data["message"])
 
     async def spawn_machine(self, machine_id: int):
         try:
@@ -394,6 +421,26 @@ class MachineDetails(Static):
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(self.base_url + self.endpoints["POST"]["reset_arena_machine"], headers=self.headers)
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+    async def send_flag(self, flag: str, machine_id: int):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["submit_flag"], headers=self.headers, data={"id": machine_id, "flag": flag})
+                data = response.json()
+                
+                return data                
+        except Exception as e:
+            return f"Error: {e}"
+        
+    async def send_arena_flag(self, flag: str):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(self.base_url + self.endpoints["POST"]["submit_arena_flag"], headers=self.headers, data={"flag": flag})
                 data = response.json()
                 
                 return data                

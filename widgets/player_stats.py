@@ -82,7 +82,7 @@ class PlayerStats(Static):
         try:
             table: Table = await self.get_profile()
             cntr = self.query_one("#player_stats_container")
-            cntr.border_title = f"{self.user_data['name']}::{self.user_data['id']}"
+            cntr.border_title = f"👤{self.user_data['name']}::{self.user_data['id']}"
             cntr.styles.border_title_color = "#9fef00"
             self.query_one("#player_rank_label").update(self.id_to_rank(self.user_data["rank"]))
             self.query_one("#player_stats_table").update(table)
@@ -218,16 +218,14 @@ class PlayerStats(Static):
 
         table.add_column(ratio=1)
         table.add_column(ratio=1)
-        table.add_column(ratio=1)
-        table.add_column(ratio=1)
 
 
-        table.add_row(f"# {self.user_data["ranking"]}", "" , f"{self.user_data["points"]} pts", "") 
+        table.add_row(f"Rank: #{self.user_data["ranking"]}", f"Points: {self.user_data["points"]}") 
         table.add_row()       
-        table.add_row("👤🏳️", f"{self.user_data["user_owns"]}", "🖥️ 🏳️", f"{self.user_data["system_owns"]}")
-        table.add_row("👤🩸", f"{self.user_data["user_bloods"]}", "🖥️ 🩸", f"{self.user_data["system_bloods"]}")
+        table.add_row(f"User 🏳️ : {self.user_data["user_owns"]}", f"System 🏳️ : {self.user_data["system_owns"]}")
+        table.add_row(f"User 🩸: {self.user_data["user_bloods"]}", f"System 🩸: {self.user_data["system_bloods"]}")
         table.add_row()
-        table.add_row("Respects", "", f"{self.user_data["respects"]}", "")
+        table.add_row("Respects", f"{self.user_data["respects"]}")
         table.add_row()
         
         # season stats

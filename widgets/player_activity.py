@@ -37,11 +37,11 @@ class PlayerActivity(Static):
         dt = DataTable(id="player_activity_table")
         dt.show_header = True
         dt.cursor_type = "row"
-        
         dt.add_column(label="Activity")
         dt.add_column(label="Target")
-        dt.add_column(label="Date")
         dt.add_column(label="Points")
+        dt.add_column(label="Date")
+
         with Container(id="player_activity_container"):
             yield dt
 
@@ -115,7 +115,7 @@ class PlayerActivity(Static):
             dt.add_row(
                 f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]}",
                 f"[b]{activity["name"]}[/b]",
-                # {activity['object_type']}
+                # {activity['object_type']}                
+                f"[#9fef00]+{activity['points']}pts",
                 f"{activity["date_diff"]}",
-                f"[#9fef00]+{activity['points']}pts"
             )
