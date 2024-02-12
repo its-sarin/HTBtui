@@ -16,7 +16,7 @@ Screen {
 
 Header {
     color: $secondary;
-    background: $background;
+    background: $background-darken-1;
     text-style: bold;
 }
 
@@ -93,16 +93,9 @@ Rule.app_rule {
         #player_activity_container {
             width: 100%;
             padding: 1 0;
-
-            #player_activity_table {
-                
-            }
         }
     }
 }
-
-
-
 
 #machines {
     layout: horizontal;
@@ -111,206 +104,183 @@ Rule.app_rule {
     min-height: 20%;
     background: $background;
     color: $color;
-}
 
-#machines_container {
-    height: 100%;
-    width: 65%;
-    padding: 1 1 0 0;
-    background: $background;
-    # border: $border;
-    # border-title-color: $border-title-color;
-}
 
-#machine_control {
-    width: 35%;
-    height: 100%;
-    margin: 1 0 1 1;
-    background: $background-lighten-1;
-    border-top: outer $border;
-    border-bottom: tall #000 30%;
-    border-title-color: $border-title-color;
-    border-title-style: bold;
-    color: $color;
+    #machines_container {
+        height: 100%;
+        width: 65%;
+        padding: 1 1 0 0;
+        background: $background;
 
-    #machine_details {
-        padding: 1 1 0 1;
+        #machines_tabbed_content {
+            width: 100%;
+        }
     }
 
-    #machine_feedback_container {
-        display: none;
+    #machine_control {
+        width: 35%;
+        height: 100%;
+        margin: 1 0 1 1;
+        background: $background-lighten-1;
+        border-top: outer $border;
+        border-bottom: tall #000 30%;
+        border-title-color: $border-title-color;
+        border-title-style: bold;
+        color: $color;
 
-        Rule {
-            width: 100%;
-            padding: 0 1;  
-            margin: 0; 
-            color: $border;
+        #machine_details {
+            padding: 1 1 0 1;
         }
-    
-        Label {
-            color: $border-title-color;
-            width: 100%;
-            text-align: center;
-            # margin-top: 1;
+
+        #machine_feedback_container {
+            display: none;
+
+            Rule {
+                width: 100%;
+                padding: 0 1;  
+                margin: 0; 
+                color: $border;
+            }
+        
+            Label {
+                color: $border-title-color;
+                width: 100%;
+                text-align: center;
+            }
+        
+            #feedback_container {
+                layout: horizontal;
+                height: 3;
+                width: 100%;
+                padding: 1 2 0 2;
+        
+                #feedback_sparkline_easy {
+                    width: 30%;
+                    .sparkline--min-color {
+                        color: $color-easy ;
+                    }
+            
+                    .sparkline--max-color {
+                        color: $color-easy;
+                    }
+                }
+        
+                #feedback_sparkline_medium {
+                    width: 40%;
+                    .sparkline--min-color {
+                        color: $color-medium;
+                    }
+            
+                    .sparkline--max-color {
+                        color: $color-medium;
+                    }
+                }
+        
+                #feedback_sparkline_hard {
+                    width: 30%;
+                    .sparkline--min-color {
+                        color: $color-hard;
+                    }
+            
+                    .sparkline--max-color {
+                        color: $color-hard;
+                    }
+                }
+            } 
         }
-    
-        #feedback_container {
-            layout: horizontal;
-            height: 3;
-            width: 100%;
-            padding: 1 2 0 2;
-    
-            #feedback_sparkline_easy {
-                width: 30%;
-                .sparkline--min-color {
-                    color: $color-easy ;
-                }
-        
-                .sparkline--max-color {
-                    color: $color-easy;
-                }
-            }
-    
-            #feedback_sparkline_medium {
-                width: 40%;
-                .sparkline--min-color {
-                    color: $color-medium;
-                }
-        
-                .sparkline--max-color {
-                    color: $color-medium;
-                }
-            }
-    
-            #feedback_sparkline_hard {
-                width: 30%;
-                .sparkline--min-color {
-                    color: $color-hard;
-                }
-        
-                .sparkline--max-color {
-                    color: $color-hard;
-                }
-            }
-        } 
-    }
 
-    #machine_control_buttons {
-        dock: bottom;
-        height: auto;
-
-        #submit_flag_container {
-            width: 100%;
+        #machine_control_buttons {
+            dock: bottom;
             height: auto;
-            layout: horizontal;
-            display: none;
 
-    
-            #submit_flag_input {
-                width: 70%;
+            #submit_flag_container {
+                width: 100%;
+                height: auto;
+                layout: horizontal;
+                display: none;
+
+        
+                #submit_flag_input {
+                    width: 70%;
+                }
+        
+                Button#submit_flag_button {
+                    min-width: 0;
+                    width: 30%;
+                    margin-right: 1;
+                }
             }
-    
-            Button#submit_flag_button {
-                min-width: 0;
-                width: 30%;
-                margin-right: 1;
+
+            Button#spawn_machine_button,
+            Button#stop_machine_button,
+            Button#reset_machine_button {
+                width: 100%;
+                margin: 0 1;
+                display: none;
             }
         }
 
-        Button#spawn_machine_button,
-        Button#stop_machine_button,
-        Button#reset_machine_button {
-            width: 100%;
-            margin: 0 1;
-            display: none;
-        }
-    }
-}
-
-#machine_control.active {
-    border-title-color: $secondary;
-
-    #machine_feedback_container {
-        display: block;
-    }
-
-    #machine_control_buttons {
-        display: block;
-
-        #submit_flag_container,
-        Button#stop_machine_button,
-        Button#reset_machine_button {
-            display: block;
+        &.inactive {
+            border-title-color: $border-title-color;
+        
+            #machine_feedback_container {
+                display: block;
+            }
+        
+            #machine_control_buttons {
+                Button#spawn_machine_button {
+                    display: block;
+                }
+                Button#stop_machine_button,
+                Button#reset_machine_button{
+                    display: none;
+                }
+            }
         }
 
-        Button#spawn_machine_button {
-            display: none;
+        &.active {
+            border-title-color: $secondary;
+        
+            #machine_feedback_container {
+                display: block;
+            }
+        
+            #machine_control_buttons {
+                display: block;
+        
+                #submit_flag_container,
+                Button#stop_machine_button,
+                Button#reset_machine_button {
+                    display: block;
+                }
+        
+                Button#spawn_machine_button {
+                    display: none;
+                }
+        
+                Button#spawn_machine_button,
+                Button#submit_flag_button {
+                    background: $secondary;
+                    border-top: tall $secondary-lighten-1;
+                    border-bottom: tall $secondary 30%;
+        
+                    &:hover {
+                        background: $secondary 90%;
+                    }
+                }
+        
+                Button#stop_machine_button {
+                    background: #c6383c;
+                    border-top: tall #a6595c;
+                    border-bottom: tall #c6383c 30%;
+                
+                    &:hover {
+                        background: #c6383c 90%;
+                    }
+                }
+            }
         }
     }
-}
-
-#machine_control.active_but_inactive {
-    #machine_control_buttons {
-        Button#spawn_machine_button,
-        Button#stop_machine_button,
-        Button#reset_machine_button {
-            display: none;
-        }
-    }
-}
-
-#machine_control.inactive {
-    border-title-color: $border-title-color;
-
-    #machine_feedback_container {
-        display: block;
-    }
-
-    #machine_control_buttons {
-        Button#spawn_machine_button {
-            display: block;
-        }
-        Button#stop_machine_button,
-        Button#reset_machine_button{
-            display: none;
-        }
-    }
-}
-
-Button#spawn_machine_button,
-Button#submit_flag_button {
-    background: $secondary;
-    border-top: tall $secondary-lighten-1;
-    border-bottom: tall $secondary 30%;
-
-    &:hover {
-        background: $secondary 90%;
-    }
-}
-
-Button#stop_machine_button {
-    background: #c6383c;
-    border-top: tall #a6595c;
-    border-bottom: tall #c6383c 30%;
-
-    &:hover {
-        background: #c6383c 90%;
-    }
-}
-
-#machines_tabbed_content {
-    width: 100%;
-}
-
-MachineDetails {
-    width: 100%;
-    height: auto;
-    
-}
-
-ContentSwitcher#machines_switcher {
-    width: 100%;
-    height: 100%;
 }
 
 CurrentMachines,
@@ -372,48 +342,28 @@ RichLog#log {
     height: 1;
     dock: bottom;
     background: #000;
+
+    VPNConnection,
+    ActiveMachine {
+        height: 100%;
+        min-height: 100%;
+        color: $color;
+        content-align: center middle;
+
+        &:hover {
+            background: $background-darken-1;
+            color: auto;
+        }
+    }
+    
+    VPNConnection {
+        width: 33%;
+        dock: left;
+    }
+    
+    ActiveMachine {
+        width: 33%;
+        dock: right;
+    }
 }
 
-VPNConnection, ActiveMachine {
-    height: 100%;
-    min-height: 100%;
-    color: $color;
-    content-align: center middle;
-}
-
-VPNConnection:hover, 
-ActiveMachine:hover {
-    background: $background-darken-1;
-    color: auto;
-}
-
-VPNConnection {
-    width: 33%;
-    dock: left;
-}
-
-ActiveMachine {
-    width: 33%;
-    dock: right;
-}
-
-# Footer {
-#     background: $background-darken-1;
-#     color: $color;
-# }
-
-# Footer > .footer--highlight {
-#     background: transparent;
-#     color: auto;
-# }
-
-# Footer > .footer--highlight-key {
-#     background: $secondary;
-#     text-style: bold;
-#     color: auto;
-# }
-
-# Footer > .footer--key {
-#     text-style: bold;
-#     background: transparent;
-# }
