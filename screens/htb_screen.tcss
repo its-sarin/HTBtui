@@ -197,7 +197,7 @@ Rule.app_rule {
 
     #machine_control_buttons {
         dock: bottom;
-        height: 10;
+        height: auto;
 
         #submit_flag_container {
             width: 100%;
