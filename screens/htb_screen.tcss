@@ -201,6 +201,7 @@ Rule.app_rule {
 
         #submit_flag_container {
             width: 100%;
+            height: auto;
             layout: horizontal;
             display: none;
 
