@@ -115,7 +115,6 @@ class PlayerActivity(Static):
             dt.add_row(
                 f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]}",
                 f"[b]{activity["name"]}[/b]",
-                # {activity['object_type']}                
                 f"[#9fef00]+{activity['points']}pts",
                 f"{activity["date_diff"]}",
             )

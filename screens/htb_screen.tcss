@@ -49,7 +49,7 @@ Rule.app_rule {
             border-title-color: $border-title-color;
             border-title-style: bold;
             border-title-align: right;
-            overflow-y: hidden;
+            overflow-y: auto;
 
             #player_rank_label,
             #player_rank_progress_label {

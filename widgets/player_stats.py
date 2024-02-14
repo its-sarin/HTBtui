@@ -1,11 +1,9 @@
 import httpx
 
 from rich.table import Table
-from rich import box
 from textual.app import ComposeResult
 from textual.containers import Container
 from textual.widgets import Static, ProgressBar, Label
-from textual.reactive import Reactive
 
 from utilities import APIToken
 from enums import Ranks, DebugLevel

@@ -113,19 +113,4 @@ class VPNConnection(Static):
         if self.connection_data["status"] != "Active":
             return f"[red bold]{self.connection_data["status"]}"
 
-        # table = Table(
-        #     box=box.SIMPLE,
-        #     show_header=False,
-        #     show_footer=False,
-        #     pad_edge=False,
-        #     expand=True
-        # )
-
-        # table.add_column()
-
-        # table.add_row(self.connection_data["location_type_friendly"] + " -- " + f"[#9fef00]{self.connection_data["connection"]["ip4"]}")
-        # table.add_row(self.connection_data["server"]["hostname"], )
-        # table.add_row("Pwnbox Active" if self.connection_data["connection"]["through_pwnbox"] else "Pwnbox Inactive")
-        # table.add_row(f"↑ {self.connection_data["connection"]["down"]} : ↓ {self.connection_data["connection"]["up"]}")
-
         return f"{self.connection_data["location_type_friendly"]} :: [#9fef00]{self.connection_data["connection"]["ip4"]}"

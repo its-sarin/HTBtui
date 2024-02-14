@@ -47,6 +47,7 @@ class MachineDetails(Static):
     active_machine_data = Reactive({})
 
     """
+    Example data :
     {
         "id": None,
         "status": None, 
@@ -108,7 +109,7 @@ class MachineDetails(Static):
         self.selected_machine_id = machine_id
         self.selected_machine_data = machine_data
         self.border_title = f"🖥️ {self.selected_machine_data['name']}::{self.selected_machine_id}"
-        self.handle_display_buttons()
+        self.handle_display_controls()
         self.query_one("#machine_details").update(self.make_machine_details())    
 
     def clear_context(self) -> None:
@@ -119,7 +120,7 @@ class MachineDetails(Static):
         self.selected_machine_id = None
         self.selected_machine_data = {}
         self.border_title = "Machine Info"
-        self.handle_display_buttons()
+        self.handle_display_controls()
         self.query_one("#machine_details").update("")        
 
     def get_context(self) -> dict:
@@ -163,7 +164,7 @@ class MachineDetails(Static):
             button.disabled = True
         self.query_one("#submit_flag_input").disabled = True
 
-    def handle_display_buttons(self) -> None:
+    def handle_display_controls(self) -> None:
         
         self.enable_controls()
 
@@ -334,13 +335,14 @@ class MachineDetails(Static):
                 self.app.post_message(DebugMessage({f"[!] {data['message']}"}, DebugLevel.LOW))
                 self.notify(data["message"])
 
-    async def on_input_submitted(self, message: Input.Submitted) -> None:
+    @on(Input.Submitted, selector="#submit_flag_input")
+    async def handle_input(self, event: Input.Submitted) -> None:
         """
         Event handler for when the submit flag input is submitted.
         """
         self.disable_controls()
-        message.control.clear()
-        await self.submit_flag(message.value, self.selected_machine_id)
+        event.control.clear()
+        await self.submit_flag(event.value, self.selected_machine_id)
         self.enable_controls()        
 
     async def submit_flag(self, flag: str, machine_id: int = None) -> None:
