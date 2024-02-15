@@ -1,9 +1,24 @@
-## Welcome to spellb00k
+## HTBtui
 
-This is merely a test!
+HTBtui is a "terminal user interface" for interacting with the Hack the Box api.
+
+![Screenshot from 2024-02-15 14-50-56](https://github.com/its-sarin/HTBtui/assets/1649588/863fc447-c4f4-4f2f-9dbe-181755ca61c3)
+
+
+
+The following features are currently supported:
+- Player statistics
+- Player seasonal statistics
+- Player activity
+- Current, retired, and seasonal machine listing
+- Starting, stopping, and resetting current, retired, and seasonal machines
+- Flag submission for current, retired, and seasonal machines
+- Machine statistics and user-submitted difficulty rating
+- HTB vpn connection status with IP address (with click-to-copy functionality)
+- Active machine status with IP address (with click-to-copy functionality)
+
+![Screenshot from 2024-02-15 14-54-49](https://github.com/its-sarin/HTBtui/assets/1649588/94a488fe-e39c-48bb-9769-af38b202a133)
 
 ---
 
-```
-python3 htb_screen.py
-```
+
