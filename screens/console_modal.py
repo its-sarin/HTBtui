@@ -97,21 +97,6 @@ class ConsoleModal(ModalScreen):
         self.run_command(message.value)
         message.control.clear()
 
-    # @on(DebugMessage)
-    # def log_debug_messages(self, message: DebugMessage) -> None:
-    #     """
-    #     Logs debug messages to the console.
-
-    #     Args:
-    #         message (DebugMessage): The debug message to log.
-    #     """
-    #     if message.debug_level.value <= self.debug_level.value:
-    #         try:
-    #             log = self.query_one(RichLog)
-    #             log.write(message.data)
-    #         except Exception as e:
-    #             print(f"Error: {e}")
-
     async def fetch_search_results(self, search_type: str, search_term: str) -> None:
         """
         Fetches search results based on the search type and term.

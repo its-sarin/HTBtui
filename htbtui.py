@@ -2,7 +2,6 @@ from textual import on
 from textual.app import App
 
 from screens import HTBScreen, ConsoleModal
-
 from messages import DebugMessage, LogMessage
 from enums import DebugLevel
 
@@ -19,7 +18,7 @@ class HTBtui(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self.debug_level = DebugLevel.MEDIUM
+        self.debug_level = DebugLevel.HIGH
     
     def on_ready(self) -> None:
         """

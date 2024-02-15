@@ -282,28 +282,28 @@ Rule.app_rule {
         
                 Button#spawn_machine_button {
                     display: none;
-                }
+                }                
+            }
+        }
+
+        Button#spawn_machine_button,
+        Button#submit_flag_button {
+            background: $secondary;
+            border-top: tall $secondary-lighten-1;
+            border-bottom: tall $secondary 30%;
+
+            &:hover {
+                background: $secondary 90%;
+            }
+        }
+
+        Button#stop_machine_button {
+            background: #c6383c;
+            border-top: tall #a6595c;
+            border-bottom: tall #c6383c 30%;
         
-                Button#spawn_machine_button,
-                Button#submit_flag_button {
-                    background: $secondary;
-                    border-top: tall $secondary-lighten-1;
-                    border-bottom: tall $secondary 30%;
-        
-                    &:hover {
-                        background: $secondary 90%;
-                    }
-                }
-        
-                Button#stop_machine_button {
-                    background: #c6383c;
-                    border-top: tall #a6595c;
-                    border-bottom: tall #c6383c 30%;
-                
-                    &:hover {
-                        background: #c6383c 90%;
-                    }
-                }
+            &:hover {
+                background: #c6383c 90%;
             }
         }
     }
