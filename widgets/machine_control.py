@@ -222,15 +222,15 @@ class MachineDetails(Static):
 
         table.add_row(
             self.selected_machine_data["os"], 
-            f"[{self.machine_difficulty_map[self.selected_machine_data['difficulty']]}]{self.selected_machine_data["difficulty"]}"
+            f"[{self.machine_difficulty_map[self.selected_machine_data['difficulty']]}]{self.selected_machine_data['difficulty']}"
         )
         table.add_row(
             "User Flag ✅" if self.selected_machine_data['user_owned'] else "User Flag ❌",
             "Root Flag ✅" if self.selected_machine_data['root_owned'] else "Root Flag ❌"
         )
         table.add_row(
-            f"{self.selected_machine_data["points"]} points",
-            f"{self.selected_machine_data["rating"]} stars"
+            f"{self.selected_machine_data['points']} points",
+            f"{self.selected_machine_data['rating']} stars"
         )
 
         # table.add_row("Labels", self.selected_data["labels"])

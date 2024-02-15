@@ -172,14 +172,14 @@ class ActiveMachine(Static):
 
     def make_active_machine(self):
         if self.active_machine_data["status"] != "Active":
-            return f"[b]{self.active_machine_data["status"]}"
+            return f"[b]{self.active_machine_data['status']}"
         
         if self.active_machine_data["ip"] is None:
             if self.active_machine_data["playInfo"]["isSpawned"]:
-                return f"{self.active_machine_data["name"]} :: [#9fef00]spawned"
+                return f"{self.active_machine_data['name']} :: [#9fef00]spawned"
             if self.active_machine_data["playInfo"]["isSpawning"]:
-                return f"{self.active_machine_data["name"]} :: [#9fef00]spawning"
+                return f"{self.active_machine_data['name']} :: [#9fef00]spawning"
             
-            return f"{self.active_machine_data["name"]} :: [#9fef00]{self.active_machine_data["status"]}"
+            return f"{self.active_machine_data['name']} :: [#9fef00]{self.active_machine_data['status']}"
         
-        return f"{self.active_machine_data["name"]} :: [#9fef00]{self.active_machine_data["ip"]}"
+        return f"{self.active_machine_data['name']} :: [#9fef00]{self.active_machine_data['ip']}"

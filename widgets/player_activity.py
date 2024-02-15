@@ -113,8 +113,8 @@ class PlayerActivity(Static):
 
         for activity in self.activity_data:
             dt.add_row(
-                f"[b]{activity["flag_title"]}" if "flag_title" in activity else f"[b]{activity["type"]}",
-                f"[b]{activity["name"]}[/b]",
+                f"[b]{activity['flag_title']}" if "flag_title" in activity else f"[b]{activity['type']}",
+                f"[b]{activity['name']}[/b]",
                 f"[#9fef00]+{activity['points']}pts",
-                f"{activity["date_diff"]}",
+                f"{activity['date_diff']}",
             )

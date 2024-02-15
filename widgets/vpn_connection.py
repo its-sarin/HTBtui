@@ -111,6 +111,6 @@ class VPNConnection(Static):
 
     def make_connection(self):
         if self.connection_data["status"] != "Active":
-            return f"[red bold]{self.connection_data["status"]}"
+            return f"[red bold]{self.connection_data['status']}"
 
-        return f"{self.connection_data["location_type_friendly"]} :: [#9fef00]{self.connection_data["connection"]["ip4"]}"
+        return f"{self.connection_data['location_type_friendly']} :: [#9fef00]{self.connection_data['connection']['ip4']}"

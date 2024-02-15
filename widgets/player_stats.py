@@ -218,18 +218,18 @@ class PlayerStats(Static):
         table.add_column(ratio=1)
 
 
-        table.add_row(f"Rank: #{self.user_data["ranking"]}", f"Points: {self.user_data["points"]}") 
+        table.add_row(f"Rank: #{self.user_data['ranking']}", f"Points: {self.user_data['points']}") 
         table.add_row()       
-        table.add_row(f"User 🏳️ : {self.user_data["user_owns"]}", f"System 🏳️ : {self.user_data["system_owns"]}")
-        table.add_row(f"User 🩸: {self.user_data["user_bloods"]}", f"System 🩸: {self.user_data["system_bloods"]}")
+        table.add_row(f"User 🏳️ : {self.user_data['user_owns']}", f"System 🏳️ : {self.user_data['system_owns']}")
+        table.add_row(f"User 🩸: {self.user_data['user_bloods']}", f"System 🩸: {self.user_data['system_bloods']}")
         table.add_row()
-        table.add_row("Respects", f"{self.user_data["respects"]}")
+        table.add_row("Respects", f"{self.user_data['respects']}")
         table.add_row()
         
         # season stats
-        table.add_row("Season Tier", self.season_data["league"])
-        table.add_row("Season Rank", f"{self.season_data["rank"]}/{self.season_data["total_ranks"]}")
-        table.add_row("Season Points", str(self.season_data["total_season_points"]))
-        table.add_row("Season Flags", f"{self.season_data["flags_to_next_rank"]["obtained"]}/{self.season_data["flags_to_next_rank"]["total"]}")
+        table.add_row("Season Tier", self.season_data['league'])
+        table.add_row("Season Rank", f"{self.season_data['rank']}/{self.season_data['total_ranks']}")
+        table.add_row("Season Points", str(self.season_data['total_season_points']))
+        table.add_row("Season Flags", f"{self.season_data['flags_to_next_rank']['obtained']}/{self.season_data['flags_to_next_rank']['total']}")
         
         return table
