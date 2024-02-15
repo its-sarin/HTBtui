@@ -4,7 +4,7 @@ HTBtui is a "terminal user interface" for interacting with the Hack the Box api.
 
 ![Screenshot from 2024-02-15 14-50-56](https://github.com/its-sarin/HTBtui/assets/1649588/863fc447-c4f4-4f2f-9dbe-181755ca61c3)
 
-
+### Features
 
 The following features are currently supported:
 - Player statistics
@@ -21,4 +21,17 @@ The following features are currently supported:
 
 ---
 
+### Installation
+
+HTBtui requires a Hack the Box API key in order to function. To generate an API key, visit: https://app.hackthebox.com/profile/settings
+
+
+
+```
+git clone https://github.com/its-sarin/HTBtui.git
+```
+
+```
+pip3 install -r requirements.txt
+```
 
