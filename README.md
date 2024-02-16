@@ -21,17 +21,43 @@ The following features are currently supported:
 
 ---
 
+### Configuration
+
+HTBtui requires a Hack the Box API token in order to function. To generate an API token, go to your Hack the Box profile settings found here: https://app.hackthebox.com/profile/settings
+
+*[Note: if you've previously configured "HTB cli", you can skip this part as the token and the environment variable are the same]*
+
+Click on "Create App Token":
+
+![Screenshot from 2024-02-15 18-49-51](https://github.com/its-sarin/HTBtui/assets/1649588/5b264b7e-5952-427d-899d-cbaf2fc4c0f1)
+
+The generated token will only be revealed to you one time, so be sure to keep a record of it in a secure place.
+
+This token will need to be added as an environment variable named "HTB_TOKEN" to your `.zshrc` or `.bashrc` file:
+```
+echo "export HTB_TOKEN=<TOKEN VALUE> | tee -a ~/.zshrc
+```
+
+Reinitialize your `.zshrc` or `.bashrc` file: 
+```
+. ~/.zshrc
+```
+
 ### Installation
 
-HTBtui requires a Hack the Box API key in order to function. To generate an API key, visit: https://app.hackthebox.com/profile/settings
-
-
+Clone the repo:
 
 ```
 git clone https://github.com/its-sarin/HTBtui.git
 ```
 
+Install requirements via pip3:
 ```
 pip3 install -r requirements.txt
+```
+
+Now you can run HTBtui!
+```
+python3 htbtui.py
 ```
 
