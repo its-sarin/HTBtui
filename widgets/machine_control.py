@@ -108,7 +108,7 @@ class MachineDetails(Static):
         """
         self.selected_machine_id = machine_id
         self.selected_machine_data = machine_data
-        self.border_title = f"🖥️ {self.selected_machine_data['name']}::{self.selected_machine_id}"
+        self.border_title = f"{self.selected_machine_data['name']}::{self.selected_machine_id}"
         self.handle_display_controls()
         self.query_one("#machine_details").update(self.make_machine_details())    
 

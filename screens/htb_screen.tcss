@@ -5,7 +5,7 @@ $background-darken-1: #171717;
 $background-lighten-1: #1a2332;
 $border: #3d5276;
 $border-inverse: #111927;
-$border-title-color: #5775a8
+$border-title-color: #a4b1cd
 $color: #a4b1cd;
 $color-easy: #90cd3f;
 $color-medium: #ffb83e;
@@ -35,7 +35,7 @@ Rule.app_rule {
     background: $background;
 
     #player_stats {
-        width: 35%;
+        width: 40%;
         height: 100%;
 
         Container#player_stats_container {
@@ -44,8 +44,9 @@ Rule.app_rule {
             margin: 0 1 1 0;
             padding: 1 0;
             background: $background-lighten-1;
-            border-top: outer $border;
-            border-bottom: tall #000 30%;
+            # border-top: outer $border;
+            # border-bottom: tall #000 30%;
+            border: panel $border;
             border-title-color: $border-title-color;
             border-title-style: bold;
             border-title-align: right;
@@ -88,7 +89,7 @@ Rule.app_rule {
     }
     
     #player_activity {
-        width: 65%;
+        width: 60%;
 
         DataTable > .datatable--header {
             background: $background-lighten-1;
@@ -148,10 +149,12 @@ Rule.app_rule {
         height: 100%;
         margin: 1 0 1 1;
         background: $background-lighten-1;
-        border-top: outer $border;
-        border-bottom: tall #000 30%;
+        # border-top: outer $border;
+        # border-bottom: tall #000 30%;
+        border: panel $border;
         border-title-color: $border-title-color;
         border-title-style: bold;
+        border-title-align: left;
         color: $color;
 
         #machine_details {
